@@ -10,9 +10,12 @@
 !source     "src/c64_defs.asm"
 !source     "src/c64_maths.asm"
 !source     "src/c64_raster.asm"
+!source     "src/c64_screen.asm"
 
 MAIN
     jsr     ROM_CLR_SCREEN
+    jsr     SCREEN_SET_MULTI_COLOR_CHARACTER_MODE
+    jsr     SCREEN_SET_HOZ_SCROLLING_38
     jsr     MATHS_SETUP_RNG
     jsr     RASTER_INTERRUPT_SETUP
 
@@ -22,8 +25,8 @@ HELLO
     lda     .hellotext,y
     beq     +
     sta     SCREEN_RAM+15+SCREEN_WIDTH_CHARS,y
-    lda     #1
-    sta     $D800+15+SCREEN_WIDTH_CHARS,y
+    lda     #PURPLE
+    sta     COLOR_RAM+15+SCREEN_WIDTH_CHARS,y
     iny
     jmp     HELLO
 +

@@ -1,8 +1,7 @@
 
 
-; mostly here to show how macros work
-; --- Usage in your code ---
-; +ACK_RASTER
+; +ACK_RASTER to use
+; Use our "lazy" ASL $D019 macro
 !macro ACK_RASTER {
     asl $D019
 }
@@ -17,16 +16,33 @@
     jmp $FEB1
 }
 
+!macro SET_IRQ .irq_name {
+    lda #<.irq_name     ; Low byte
+    sta $0314           ; Kernel pushes AXY then jumps to addr here
+    lda #>.irq_name     ; High byte
+    sta $0315           ; Kernel pushes AXY then jumps to addr here
+}
+
+; only up to 255... !TODO
+!macro RASTER_INTERRUPT_SET_ROW .row {
+    lda #.row
+    sta RASTER_LINE      
+    lda VIC_CR1 
+    and #$7f        ; Ensure the 8th bit of the raster line is 0 (for lines < 256)
+    sta VIC_CR1
+}
+
+
 ; 
 RASTER_INTERRUPT_SETUP
     sei             ; 1. Stop all interrupts while we mess with the wires
     
     ; 2. Disable the CIA "Timer" interrupts (the 60Hz system tick)
-    lda #$7f
-    sta $dc0d       ; Clear CIA 1 interrupt control
-    sta $dd0d       ; Clear CIA 2 interrupt control
-    lda $dc0d       ; Acknowledge any pending CIA interrupts
-    lda $dd0d       ; Acknowledge any pending CIA interrupts
+    lda #$7F
+    sta $DC0D       ; Clear CIA 1 interrupt control
+    sta $DD0D       ; Clear CIA 2 interrupt control
+    lda $DC0D       ; Acknowledge any pending CIA interrupts
+    lda $DD0D       ; Acknowledge any pending CIA interrupts
 
     ; 3. Setup VIC-II to trigger a Raster Interrupt
     lda #$01
@@ -34,61 +50,85 @@ RASTER_INTERRUPT_SETUP
 
     ; 4. Set the line number where the interrupt triggers
     ; default to row 0
-    lda #0
-    jsr RASTER_INTERRUPT_SET
+    +RASTER_INTERRUPT_SET_ROW 0
 
     ; 5. Point the Vector to our custom routine
-    lda #<RASTER_IRQ    ; Low byte
-    sta $0314
-    lda #>RASTER_IRQ    ; High byte
-    sta $0315
+    +SET_IRQ RASTER_IRQ_TOP_BORDER
 
     cli             ; 6. Re-enable interrupts
     rts             ; Return to BASIC (your IRQ is now running in the background!)
 
-; A contains line
-; so only up to 255... !TODO
-RASTER_INTERRUPT_SET
-    sta RASTER_LINE      
-    lda VIC_CR1 
-    and #$7f        ; Ensure the 8th bit of the raster line is 0 (for lines < 256)
-    sta VIC_CR1
 
-    rts
-
-
-; --- THE ACTUAL INTERRUPT ROUTINE ---
-RASTER_IRQ
-    lda     #0
-    cmp     RASTER_LINE
-    bne     .raster_irq_not_top_border
-.raster_irq_top_border
+; --- INTERRUPT ROUTINES ---
+RASTER_IRQ_TOP_BORDER
     lda     #BLACK
     sta     BORDER_COL
-    lda     #50
-    jsr     RASTER_INTERRUPT_SET
-    jmp     .raster_irq_done
+    sta     BG_COL
+    +RASTER_INTERRUPT_SET_ROW 50
+    +ACK_RASTER         
+    +SET_IRQ RASTER_IRQ_SKY
+    +EXIT_FAST
 
-.raster_irq_not_top_border
-    lda     #50
-    cmp     RASTER_LINE
-    bne     .raster_irq_not_sky
-.raster_irq_sky
-    lda     #BLUE
+RASTER_IRQ_SKY
+    inx
+    inx
+    inx
+    inx
+    inx
+    inx
+    inx
+    inx
+    inx
+    inx
+
+    lda     #CYAN
     sta     BORDER_COL
-    lda     #250
-    jsr     RASTER_INTERRUPT_SET
-    jmp     .raster_irq_done
+    sta     BG_COL
+    +RASTER_INTERRUPT_SET_ROW 100
+    +ACK_RASTER         
+    +SET_IRQ RASTER_IRQ_GRASS
+    +EXIT_FAST
 
-.raster_irq_not_sky
+RASTER_IRQ_GRASS
+    inx
+    inx
+    inx
+    inx
+    inx
+    inx
+    inx
+    inx
+    inx
+    inx
+
     lda     #GREEN
     sta     BORDER_COL
-    lda     #0
-    jsr     RASTER_INTERRUPT_SET
-    jmp     .raster_irq_done
-
-.raster_irq_done
-    +ACK_RASTER         ; Use our "lazy" ASL $D019 macro
+    sta     BG_COL
+    +RASTER_INTERRUPT_SET_ROW 230
+    +ACK_RASTER         
+    +SET_IRQ RASTER_IRQ_RIVER
     +EXIT_FAST
+
+RASTER_IRQ_RIVER
+    inx
+    inx
+    inx
+    inx
+    inx
+    inx
+    inx
+    inx
+    inx
+    inx
+
+    lda     #BLUE
+    sta     BORDER_COL
+    sta     BG_COL
+    +RASTER_INTERRUPT_SET_ROW 0
+    +ACK_RASTER         
+    +SET_IRQ RASTER_IRQ_TOP_BORDER
+    +EXIT_FAST
+
+
 
 

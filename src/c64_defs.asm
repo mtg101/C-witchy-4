@@ -28,11 +28,15 @@ LT_GRAY     = $0f
 SCREEN_WIDTH    = 320
 SCREEN_HEIGHT   = 200
 SCREEN_WIDTH_CHARS  = 40 
+SCREEN_WIDTH_CHARS_SCROLL  = 38
 SCREEN_HEIGHT_CHARS = 25
+SCREEN_HEIGHT_CHARS_SCROLL = 24
 
 ; --- Common VIC-II Registers ---
 BORDER_COL  = $D020
 BG_COL      = $D021
+BG_COL_1    = $D022
+BG_COL_2    = $D023
 COLOR_RAM   = $D800
 
 SCREEN_RAM  = $0400
@@ -59,17 +63,17 @@ GETIN   = $ffe4 ; Get character from buffer (call SCNKEY first if taking control
 PLOT    = $fff0 ; Set/Get cursor position
 
 ; --- VIC-II Video Controller ---
-VIC_BASE    = $d000
-SPRITE_0_X  = $d000
-SPRITE_0_Y  = $d001
+VIC_BASE    = $D000
+SPRITE_0_X  = $D000
+SPRITE_0_Y  = $D001
 
 ; --- VIC-II Control Registers ---
-VIC_CR1     = $d011 ; Vertical scroll, Screen On/Off, Bitmap mode, Raster Bit 8
-VIC_CR2     = $d016 ; Horizontal scroll, Multi-color mode, 40/38 column switch
-RASTER_LINE = $d012 ; Current scanline (Read) / Trigger line (Write)
-MEM_SETUP   = $d018 ; Where are the screen and characters located?
-VIC_INTER   = $d019 ; Interrupt Status (ACK)
-VIC_IMASK   = $d01a ; Interrupt Control (Which ones are enabled?)
+VIC_CR1     = $D011 ; Vertical scroll, Screen On/Off, Bitmap mode, Raster Bit 8
+VIC_CR2     = $D016 ; Horizontal scroll, Multi-color mode, 40/38 column switch
+RASTER_LINE = $D012 ; Current scanline (Read) / Trigger line (Write)
+MEM_SETUP   = $D018 ; Where are the screen and characters located?
+VIC_INTER   = $D019 ; Interrupt Status (ACK)
+VIC_IMASK   = $D01A ; Interrupt Control (Which ones are enabled?)
 
 ; --- Bit Masks for VIC_CR1 ($D011) ---
 ; Use these with AND/ORA to change specific settings without messing up others
@@ -77,9 +81,23 @@ SCREEN_OFF  = %01101111 ; Use with AND to hide screen (clear bit 4)
 SCREEN_ON   = %00010000 ; Use with ORA to show screen (set bit 4)
 RASTER_MSB  = %10000000 ; The 9th bit (Bit 7) of the raster position
 
-; ... repeat for Sprites 1-7
-MSB_X       = $d010 ; Most Significant Bits of X (for sprites past pixel 255)
+; --- $D011 (Vertical & Mode) Masks ---
+V_TEXT_MODE    = %00000000   ; Standard Text
+V_BITMAP_MODE  = %00100000   ; Turn on Bitmaps
+V_ECM_MODE     = %01000000   ; Extended Color Mode
+V_SCREEN_ON    = %00010000   ; Show the screen
+V_SCREEN_OFF   = %11101111   ; Hide the screen (use with AND)
+V_ROW_25       = %00001000   ; 25 row mode (Standard)
+V_ROW_24       = %11110111   ; 24 row mode (For scrolling)
 
+; --- $D016 (Horizontal & Multi) Masks ---
+H_MULTICOLOR   = %00010000   ; Enable 4-color mode
+H_COL_40       = %00001000   ; 40 Column mode (Standard)
+H_COL_38       = %11110111   ; 38 Column mode (For scrolling)
+
+; ... repeat for Sprites 1-7
+; !TODO
+MSB_X       = $d010 ; Most Significant Bits of X (for sprites past pixel 255)
 
 ; --- Zero Page Pointers ---
 ; the safe ones if you've not disabled all the ROMs
