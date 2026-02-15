@@ -75,12 +75,6 @@ MEM_SETUP   = $D018 ; Where are the screen and characters located?
 VIC_INTER   = $D019 ; Interrupt Status (ACK)
 VIC_IMASK   = $D01A ; Interrupt Control (Which ones are enabled?)
 
-; --- Bit Masks for VIC_CR1 ($D011) ---
-; Use these with AND/ORA to change specific settings without messing up others
-SCREEN_OFF  = %01101111 ; Use with AND to hide screen (clear bit 4)
-SCREEN_ON   = %00010000 ; Use with ORA to show screen (set bit 4)
-RASTER_MSB  = %10000000 ; The 9th bit (Bit 7) of the raster position
-
 ; --- $D011 (Vertical & Mode) Masks ---
 V_TEXT_MODE    = %00000000   ; Standard Text
 V_BITMAP_MODE  = %00100000   ; Turn on Bitmaps
@@ -89,6 +83,7 @@ V_SCREEN_ON    = %00010000   ; Show the screen
 V_SCREEN_OFF   = %11101111   ; Hide the screen (use with AND)
 V_ROW_25       = %00001000   ; 25 row mode (Standard)
 V_ROW_24       = %11110111   ; 24 row mode (For scrolling)
+V_RASTER_MSB   = %10000000   ; The 9th bit (Bit 7) of the raster position
 
 ; --- $D016 (Horizontal & Multi) Masks ---
 H_MULTICOLOR   = %00010000   ; Enable 4-color mode
@@ -102,8 +97,8 @@ MSB_X       = $d010 ; Most Significant Bits of X (for sprites past pixel 255)
 
 ; --- Zero Page Pointers ---
 ; the safe ones if you've not disabled all the ROMs
-ZP_PTR_1   = $fb  ; Safe Zero Page Uses $FB and $FC
-ZP_PTR_2   = $fd  ; Safe Zero Page Uses $FD and $FE
+ZP_PTR_1   = $FB  ; Safe Zero Page Uses $FB and $FC
+ZP_PTR_2   = $FD  ; Safe Zero Page Uses $FD and $FE
 
 
 
