@@ -27,9 +27,9 @@
 !macro RASTER_INTERRUPT_SET_ROW .row {
     lda #.row
     sta RASTER_LINE      
-    lda VIC_CR1 
+    lda VIC_CR_VERT 
     and #$7f        ; Ensure the 8th bit of the raster line is 0 (for lines < 256)
-    sta VIC_CR1
+    sta VIC_CR_VERT
 }
 
 

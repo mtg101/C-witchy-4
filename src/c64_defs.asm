@@ -68,8 +68,8 @@ SPRITE_0_X  = $D000
 SPRITE_0_Y  = $D001
 
 ; --- VIC-II Control Registers ---
-VIC_CR1     = $D011 ; Vertical scroll, Screen On/Off, Bitmap mode, Raster Bit 8
-VIC_CR2     = $D016 ; Horizontal scroll, Multi-color mode, 40/38 column switch
+VIC_CR_VERT = $D011 ; Vertical scroll, Screen On/Off, Bitmap mode, Raster Bit 8
+VIC_CR_HOZ  = $D016 ; Horizontal scroll, Multi-color mode, 40/38 column switch
 RASTER_LINE = $D012 ; Current scanline (Read) / Trigger line (Write)
 MEM_SETUP   = $D018 ; Where are the screen and characters located?
 VIC_INTER   = $D019 ; Interrupt Status (ACK)
@@ -92,6 +92,7 @@ V_ROW_24       = %11110111   ; 24 row mode (For scrolling)
 
 ; --- $D016 (Horizontal & Multi) Masks ---
 H_MULTICOLOR   = %00010000   ; Enable 4-color mode
+H_HI_RES       = %11101111
 H_COL_40       = %00001000   ; 40 Column mode (Standard)
 H_COL_38       = %11110111   ; 38 Column mode (For scrolling)
 
