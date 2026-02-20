@@ -50,6 +50,36 @@ SPRITE_INIT
 
     rts     
 
+SPRITE_BOB
+    lda     MATHS_RNG
+    and     #%00000111
+    cmp     #%00000000
+    beq     SPRITE_BOB_UP
+
+    cmp     #%00000001
+    beq     SPRITE_BOB_DOWN
+
+    lda     #150
+    sta     SPR0_Y
+    sta     SPR1_Y
+    sta     SPR2_Y
+    sta     SPR3_Y
+    rts
+
+SPRITE_BOB_UP
+    dec     SPR0_Y
+    dec     SPR1_Y
+    dec     SPR2_Y
+    dec     SPR3_Y
+    rts
+
+SPRITE_BOB_DOWN
+    inc     SPR0_Y
+    inc     SPR1_Y
+    inc     SPR2_Y
+    inc     SPR3_Y
+    rts
+
 
 *=$2000
 
