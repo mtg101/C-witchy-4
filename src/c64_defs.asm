@@ -62,10 +62,120 @@ SAVE    = $ffd8 ; Save to device
 GETIN   = $ffe4 ; Get character from buffer (call SCNKEY first if taking control from the system)
 PLOT    = $fff0 ; Set/Get cursor position
 
-; --- VIC-II Video Controller ---
-VIC_BASE    = $D000
-SPRITE_0_X  = $D000
-SPRITE_0_Y  = $D001
+
+; sprites
+SPR_WIDTH       = 24
+SPR_COL_WIDTH   = 12
+SPR_HEIGHT      = 21
+
+
+
+; --- VIC-II MOBs / sprites ---
+; ======================================================
+; VIC-II Sprite Position Registers
+; ======================================================
+
+SPR0_X      = $D000
+SPR0_Y      = $D001
+SPR1_X      = $D002
+SPR1_Y      = $D003
+SPR2_X      = $D004
+SPR2_Y      = $D005
+SPR3_X      = $D006
+SPR3_Y      = $D007
+SPR4_X      = $D008
+SPR4_Y      = $D009
+SPR5_X      = $D00A
+SPR5_Y      = $D00B
+SPR6_X      = $D00C
+SPR6_Y      = $D00D
+SPR7_X      = $D00E
+SPR7_Y      = $D00F
+
+; ======================================================
+; Sprite X MSB Register
+; Bit 0–7 correspond to sprite 0–7
+; ======================================================
+
+SPR_X_MSB   = $D010
+
+; ======================================================
+; Sprite Enable Register
+; Bit = 1 enables sprite
+; ======================================================
+
+SPR_ENABLE  = $D015
+
+; ======================================================
+; Sprite Y Expansion (double height)
+; ======================================================
+
+SPR_Y_EXP   = $D017
+
+; ======================================================
+; Sprite Priority (0=front, 1=behind background)
+; ======================================================
+
+SPR_PRIORITY = $D01B
+
+; ======================================================
+; Sprite Multicolor Enable
+; Bit = 1 enables multicolor for that sprite
+; ======================================================
+
+SPR_MC_ENABLE = $D01C
+
+; ======================================================
+; Sprite X Expansion (double width)
+; ======================================================
+
+SPR_X_EXP   = $D01D
+
+; ======================================================
+; Sprite-Sprite Collision Register
+; Read to detect, write to clear
+; ======================================================
+
+SPR_SPR_COLL = $D01E
+
+; ======================================================
+; Sprite-Background Collision Register
+; Read to detect, write to clear
+; ======================================================
+
+SPR_BG_COLL  = $D01F
+
+; ======================================================
+; Sprite Multicolor Shared Colors
+; ======================================================
+
+SPR_MC_COLOR0 = $D025
+SPR_MC_COLOR1 = $D026
+
+; ======================================================
+; Individual Sprite Colors
+; ======================================================
+
+SPR0_COLOR  = $D027
+SPR1_COLOR  = $D028
+SPR2_COLOR  = $D029
+SPR3_COLOR  = $D02A
+SPR4_COLOR  = $D02B
+SPR5_COLOR  = $D02C
+SPR6_COLOR  = $D02D
+SPR7_COLOR  = $D02E
+
+; ======================================================
+; Sprite pointer table (in Screen RAM)
+; ======================================================
+SPR_PTR0 = $07F8
+SPR_PTR1 = $07F9
+SPR_PTR2 = $07FA
+SPR_PTR3 = $07FB
+SPR_PTR4 = $07FC
+SPR_PTR5 = $07FD
+SPR_PTR6 = $07FE
+SPR_PTR7 = $07FF
 
 ; --- VIC-II Control Registers ---
 VIC_CR_VERT = $D011 ; Vertical scroll, Screen On/Off, Bitmap mode, Raster Bit 8
@@ -91,9 +201,6 @@ H_HI_RES       = %11101111
 H_COL_40       = %00001000   ; 40 Column mode (Standard)
 H_COL_38       = %11110111   ; 38 Column mode (For scrolling)
 
-; ... repeat for Sprites 1-7
-; !TODO
-MSB_X       = $d010 ; Most Significant Bits of X (for sprites past pixel 255)
 
 ; --- Zero Page Pointers ---
 ; the safe ones if you've not disabled all the ROMs

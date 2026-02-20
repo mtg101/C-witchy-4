@@ -7,17 +7,21 @@
 
     jmp     MAIN
 
+*=$3000
+
 !source     "src/c64_defs.asm"
 !source     "src/c64_maths.asm"
-!source     "src/c64_raster.asm"
-!source     "src/c64_screen.asm"
+!source     "src/cw4_raster.asm"
+!source     "src/cw4_screen.asm"
+!source     "src/cw4_sprite.asm"
 
 MAIN
     jsr     ROM_CLR_SCREEN
-    jsr     SCREEN_SET_MULTI_COLOR_CHARACTER_MODE
+;    jsr     SCREEN_SET_MULTI_COLOR_CHARACTER_MODE
     jsr     SCREEN_SET_HOZ_SCROLLING_38
     jsr     MATHS_SETUP_RNG
     jsr     RASTER_INTERRUPT_SETUP
+    jsr     SPRITE_INIT
 
     ldy     #0
 
