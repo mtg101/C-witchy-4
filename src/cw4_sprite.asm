@@ -11,30 +11,41 @@ SPRITE_INIT
 
 
     ; point to sprites
-    lda     #(witch_sprite_left / 64)
+    lda     #(witch_sprite_left_tint / 64)
     sta     SPR_PTR0
-
-    lda     #(witch_sprite_right / 64)
+    lda     #(which_sprite_right_tint / 64)
     sta     SPR_PTR1
+    lda     #(witch_sprite_left / 64)
+    sta     SPR_PTR2
+    lda     #(witch_sprite_right / 64)
+    sta     SPR_PTR3
 
     ; sprite colours
-    lda     #BLACK
+    lda     #BROWN
     sta     SPR0_COLOR
+    lda     #PURPLE
     sta     SPR1_COLOR
+    lda     #BLACK
+    sta     SPR2_COLOR
+    sta     SPR3_COLOR
 
     ; sprite locations
-    lda     #100
-    sta     SPR0_X
     lda     #150
     sta     SPR0_Y
+    sta     SPR1_Y
+    sta     SPR2_Y
+    sta     SPR3_Y
+
+    lda     #100
+    sta     SPR0_X
+    sta     SPR2_X
 
     lda     #100 + SPR_WIDTH
     sta     SPR1_X
-    lda     #150
-    sta     SPR1_Y
+    sta     SPR3_X
 
     ; enable sprites
-    lda     #%00000011
+    lda     #%00001111
     sta     SPR_ENABLE
 
     rts     
@@ -90,4 +101,54 @@ witch_sprite_right:
 !byte %00000001,%11100000,%00000000
 !byte %00000011,%11000000,%00000000
 !byte %00001111,%10000000,%00000000
+
+!align 63, 0        ; not 64 due to ACME's AND mask - always 2^n-1
+
+witch_sprite_left_tint
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %11000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %10011000,%00000000,%00000000
+!byte %10110010,%00000000,%00000000
+!byte %00101001,%01010000,%00000000
+!byte %10100010,%01111000,%00000000
+!byte %11010001,%01001000,%00000000
+!byte %00100110,%11010000,%00000000
+!byte %11010100,%00000000,%00000000
+!byte %01000000,%00000000,%00000000
+!byte %01100000,%00000000,%00000000
+!byte %11000000,%00000000,%00000000
+
+!align 63, 0        ; not 64 due to ACME's AND mask - always 2^n-1
+
+which_sprite_right_tint
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %00000011,%00000000,%00000000
+!byte %00000110,%01000000,%00000000
+!byte %00001100,%10000000,%00000000
+!byte %00011001,%10000000,%00000000
+!byte %00000011,%00000000,%00000000
+!byte %00001100,%00000000,%00000000
+!byte %00000010,%00000000,%00000000
+!byte %00000001,%00000000,%00000000
+!byte %00000000,%10000000,%00000000
+!byte %00000001,%10000000,%00000000
+!byte %00000001,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
+!byte %00000000,%00000000,%00000000
 
