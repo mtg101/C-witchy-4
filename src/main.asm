@@ -11,8 +11,8 @@
 
 !source     "src/c64_defs.asm"
 !source     "src/c64_maths.asm"
+!source     "src/c64_screen.asm"
 !source     "src/cw4_raster.asm"
-!source     "src/cw4_screen.asm"
 !source     "src/cw4_sprite.asm"
 
 MAIN
