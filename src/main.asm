@@ -16,6 +16,7 @@
 !source     "src/cw4_sprite.asm"
 
 MAIN
+    jsr     SCREEN_OFF
     jsr     ROM_CLR_SCREEN
 ;    jsr     SCREEN_SET_MULTI_COLOR_CHARACTER_MODE
     jsr     SCREEN_SET_HOZ_SCROLLING_38
@@ -34,6 +35,8 @@ HELLO
     iny
     jmp     HELLO
 +
+
+    jsr     SCREEN_ON
 
 HOLD
     jmp     HOLD

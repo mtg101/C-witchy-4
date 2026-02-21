@@ -178,8 +178,8 @@ SPR_PTR6 = $07FE
 SPR_PTR7 = $07FF
 
 ; --- VIC-II Control Registers ---
-VIC_CR_VERT = $D011 ; Vertical scroll, Screen On/Off, Bitmap mode, Raster Bit 8
-VIC_CR_HOZ  = $D016 ; Horizontal scroll, Multi-color mode, 40/38 column switch
+VIC_CR1 = $D011 ; CR1 Vertical scroll, Screen On/Off, Bitmap mode, Raster Bit 8
+VIC_CR2  = $D016 ; CR2 Horizontal scroll, Multi-color mode, 40/38 column switch
 RASTER_LINE = $D012 ; Current scanline (Read) / Trigger line (Write)
 MEM_SETUP   = $D018 ; Where are the screen and characters located?
 VIC_INTER   = $D019 ; Interrupt Status (ACK)

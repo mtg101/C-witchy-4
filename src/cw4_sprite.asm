@@ -30,17 +30,17 @@ SPRITE_INIT
     sta     SPR3_COLOR
 
     ; sprite locations
-    lda     #150
+    lda     #SPRITE_START_Y
     sta     SPR0_Y
     sta     SPR1_Y
     sta     SPR2_Y
     sta     SPR3_Y
 
-    lda     #100
+    lda     #SPRITE_START_X
     sta     SPR0_X
     sta     SPR2_X
 
-    lda     #100 + SPR_WIDTH
+    lda     #SPRITE_START_X + SPR_WIDTH
     sta     SPR1_X
     sta     SPR3_X
 
@@ -59,7 +59,7 @@ SPRITE_BOB
     cmp     #%00000001
     beq     SPRITE_BOB_DOWN
 
-    lda     #150
+    lda     #SPRITE_START_Y
     sta     SPR0_Y
     sta     SPR1_Y
     sta     SPR2_Y
@@ -80,6 +80,9 @@ SPRITE_BOB_DOWN
     inc     SPR3_Y
     rts
 
+
+SPRITE_START_X = 80
+SPRITE_START_Y = 180
 
 *=$2000
 
