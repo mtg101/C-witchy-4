@@ -54,4 +54,8 @@ HOLD
 .hellotext
     !scr    "c-witchy-4",0
 
-
+; --- End of code section ---
+!warn "Code ends at: ", *
+!if * > $CFFF {
+    !error "Code has hit the I/O area at $D000!"
+}
