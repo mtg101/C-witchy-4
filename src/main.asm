@@ -13,8 +13,8 @@
 
 
 
-; all the code no location specific data
-*=$3000
+; all the code no location specific data, bank 1 full 16k to use
+*=$4000
 
 !source     "src/c64_defs.asm"
 !source     "src/c64_maths.asm"
@@ -40,6 +40,6 @@ HOLD
 
 ; --- End of code section ---
 !warn "Code ends at: ", *
-!if * > $CFFF {
-    !error "Code has hit the I/O area at $D000!"
+!if * > $7FFF {
+    !error "Code has hit the bank 1 boundary!"
 }
