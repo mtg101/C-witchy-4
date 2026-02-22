@@ -36,6 +36,18 @@ SCREEN_ON
     sta     VIC_CR1
     rts    
 
+SCREEN_RESET_SCROLL_X
+    lda     VIC_CR2
+    and     #%00000111
+    sta     VIC_CR2
+    rts
+
+SCREEN_RESET_SCROLL_Y
+    lda     VIC_CR1
+    and     #%00000111
+    sta     VIC_CR1
+    rts
+
 SCREEN_CHAR_COPY_ROM_2800
      sei          ; Disable interrupts to prevent the Kernal 
                   ; from trying to read I/O while we hide it.
@@ -55,8 +67,8 @@ SCREEN_CHAR_COPY_ROM_2800
     lda #$28     ; Destination High
     sta $fe
 
-    ; --- The 1KB Copy Loop (first 128 chars) ---
-    ldx #$04     ; only first 128 chars: 4 pages of 256 bytes = 1024 bytes
+    ; --- The 512byte Copy Loop (first 64 chars chars, udgs beyond) ---
+    ldx #$02     ; only first 64 chars: 2 pages of 256 bytes = 512 bytes
     ldy #$00     ; Clear Y index
     
 copy_loop:

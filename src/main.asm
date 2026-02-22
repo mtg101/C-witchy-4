@@ -33,26 +33,11 @@ MAIN
     jsr     SPRITE_INIT
     jsr     SCREEN_CHAR_COPY_ROM_2800
     jsr     SCREEN_CHAR_SET_2800
-
-    ldy     #0
-
-HELLO
-    lda     .hellotext,y
-    beq     +
-    sta     SCREEN_RAM+15+SCREEN_WIDTH_CHARS,y
-    lda     #PURPLE
-    sta     COLOR_RAM+15+SCREEN_WIDTH_CHARS,y
-    iny
-    jmp     HELLO
-+
-
+    jsr     TILE_BG_SETUP
     jsr     SCREEN_ON
 
 HOLD
     jmp     HOLD
-
-.hellotext
-    !scr    "c-witchy-4",0
 
 ; --- End of code section ---
 !warn "Code ends at: ", *
