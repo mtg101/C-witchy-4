@@ -7,6 +7,13 @@
 
     jmp     MAIN
 
+; data in memory includes
+!source     "src/cw4_sprite_data.asm"
+!source     "src/cw4_tile_bg_data.asm"
+
+
+
+; all the code no location specific data
 *=$3000
 
 !source     "src/c64_defs.asm"
@@ -14,6 +21,7 @@
 !source     "src/c64_screen.asm"
 !source     "src/cw4_raster.asm"
 !source     "src/cw4_sprite.asm"
+!source     "src/cw4_tile_bg.asm"
 
 MAIN
     jsr     SCREEN_OFF
@@ -23,6 +31,8 @@ MAIN
     jsr     MATHS_SETUP_RNG
     jsr     RASTER_INTERRUPT_SETUP
     jsr     SPRITE_INIT
+    jsr     SCREEN_CHAR_COPY_ROM_2800
+    jsr     SCREEN_CHAR_SET_2800
 
     ldy     #0
 

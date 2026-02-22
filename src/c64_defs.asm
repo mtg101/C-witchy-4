@@ -40,7 +40,6 @@ BG_COL_2    = $D023
 COLOR_RAM   = $D800
 
 SCREEN_RAM  = $0400
-CHAR_ROM    = $D000 ; Note: This is in a different bank than RAM!
 DEFAULT_CHR = $14   ; Value for $D018 to use Uppercase/Graphics
 LOWER_CHR   = $16   ; Value for $D018 to use Lower/Upper
 
@@ -181,7 +180,7 @@ SPR_PTR7 = $07FF
 VIC_CR1 = $D011 ; CR1 Vertical scroll, Screen On/Off, Bitmap mode, Raster Bit 8
 VIC_CR2  = $D016 ; CR2 Horizontal scroll, Multi-color mode, 40/38 column switch
 RASTER_LINE = $D012 ; Current scanline (Read) / Trigger line (Write)
-MEM_SETUP   = $D018 ; Where are the screen and characters located?
+MEM_SETUP   = $D018 ; high nibble: screen 1kb block, bits 1-3 char set 2kb block, bit 0 unused
 VIC_INTER   = $D019 ; Interrupt Status (ACK)
 VIC_IMASK   = $D01A ; Interrupt Control (Which ones are enabled?)
 
