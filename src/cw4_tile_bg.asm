@@ -21,8 +21,7 @@ TILE_BG_SETUP_LOOP
 +
 
 ; test tree
-; col 38 is max displayed - but scroll_y is 0, which is shifter far left from 39 into 38, so missing a pixel (I think...)
-; col 39 exists hidden - use for scroll test
+; col 38 is offscreen - but scroll_y is 0, which is shifted 7 bits left so 7 col pixels rows show in max col 37
 
     lda     #$40        ; first 'udg' - tree base
     sta     SCREEN_RAM+38+(40*16)
@@ -53,15 +52,26 @@ TILE_BG_SETUP_LOOP
 
 
 TILE_BG_SCROLL
+    ; only every 8 frames for now...
+    ; need global frame counter...
+
+
     ; scroll green area (ignoring wrap)
 
-
+    ; grass starts at row: 6
+    ; grass ends at row: 22
+    ; which it total rows: 22-6=16
+    ; 16 rows, 37 copies per row
+    ; 16 loops of 38 copies: unrolled :) -- yes 38, 1 into 0... 38 into 37
 
 
     ; procgen tree
-
+    ; not yet...
 
     ; fill right column with blanks and trees
+    ; blanks for now...
+    ; 16 loop blanking col 38
+
 
 
     rts
