@@ -37,8 +37,20 @@ MAIN
     jsr     TILE_BG_SETUP
     jsr     SCREEN_ON
 
-HOLD
-    jmp     HOLD
+MAIN_LOOP
+    ; is raster flag set?
+    lda     RASTER_CHASE_BEAM
+    beq     MAIN_LOOP
+
+    ; bottom border flag set
+
+    ; clear it
+    lda     #$00
+    sta     RASTER_CHASE_BEAM
+
+    jsr     TILE_BG_SCROLL
+
+    jmp     MAIN_LOOP
 
 ; --- End of code section ---
 !warn "Code ends at: ", *
