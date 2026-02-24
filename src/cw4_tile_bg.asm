@@ -1,5 +1,24 @@
 
+!macro TILE_BG_SCROLL_ROW .row_addr {
+    lda     #<.row_addr     ; set up safe zero page for offset
+    sta     ZP_PTR_1
+    lda     #>.row_addr
+    sta     ZP_PTR_1_PAIR
 
+    ldy     #0
+-
+    iny                     ; Look at next char
+    lda     (ZP_PTR_1),y    ; Indirect read
+    dey                     ; Step back
+    sta     (ZP_PTR_1),y    ; Indirect write
+    iny                     ; Move forward to next pair
+    cpy     #38             ; Done all 37? (38-1 leaving right col alone to write later)
+    bne     -
+
+    ;iny                     ; last col
+    lda     #BLANK_SPACE
+    sta     (ZP_PTR_1),y    ; blank final col
+}
 
 TILE_BG_SETUP
     ; reset scroll offsets
@@ -53,16 +72,39 @@ TILE_BG_SETUP_LOOP
 
 TILE_BG_SCROLL
     ; only every 8 frames for now...
-    ; need global frame counter...
+    lda     TILE_BG_FRAME_COUNTER
+    inc     TILE_BG_FRAME_COUNTER
+    and     #%00000111       ; 0-7
 
+    beq     TILE_BG_DEC_SCROLL_CHARS
 
-    ; scroll green area (ignoring wrap)
+    jsr     SCREEN_DEC_SCROLL_X
+    rts                 ; TILE_BG_SCROLL
 
-    ; grass starts at row: 6
-    ; grass ends at row: 22
-    ; which it total rows: 22-6=16
-    ; 16 rows, 37 copies per row
-    ; 16 loops of 38 copies: unrolled :) -- yes 38, 1 into 0... 38 into 37
+TILE_BG_DEC_SCROLL_CHARS
+
+    ; rows 6-22
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_6
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_7
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_8
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_9
+
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_10
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_11
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_12
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_13
+
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_14
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_15
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_16
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_17
+
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_18
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_19
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_20
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_21
+
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_22
 
 
     ; procgen tree
@@ -72,10 +114,41 @@ TILE_BG_SCROLL
     ; blanks for now...
     ; 16 loop blanking col 38
 
+    rts                 ; TILE_BG_SCROLL
 
 
-    rts
+
 
 
 .hellotext
     !scr    "c-witchy-4",0
+
+TILE_BG_FRAME_COUNTER
+    !byte   $00
+
+; grass starts at row: 6
+; goes 16 rows to: 22
+; base is SCREEN_RAM $4000
+; add (40 * y) = (40 * 6) = 240 = $F0
+; each extra row adds 40 = $28
+TILE_BG_GRASS_START_6     = SCREEN_RAM + $F0 + (0 * $28)
+TILE_BG_GRASS_START_7     = SCREEN_RAM + $F0 + (1 * $28)
+TILE_BG_GRASS_START_8     = SCREEN_RAM + $F0 + (2 * $28)
+TILE_BG_GRASS_START_9     = SCREEN_RAM + $F0 + (3 * $28)
+
+TILE_BG_GRASS_START_10     = SCREEN_RAM + $F0 + (4 * $28)
+TILE_BG_GRASS_START_11     = SCREEN_RAM + $F0 + (5 * $28)
+TILE_BG_GRASS_START_12     = SCREEN_RAM + $F0 + (6 * $28)
+TILE_BG_GRASS_START_13     = SCREEN_RAM + $F0 + (7 * $28)
+
+TILE_BG_GRASS_START_14     = SCREEN_RAM + $F0 + (8 * $28)
+TILE_BG_GRASS_START_15     = SCREEN_RAM + $F0 + (9 * $28)
+TILE_BG_GRASS_START_16     = SCREEN_RAM + $F0 + (10 * $28)
+TILE_BG_GRASS_START_17     = SCREEN_RAM + $F0 + (11 * $28)
+
+TILE_BG_GRASS_START_18     = SCREEN_RAM + $F0 + (12 * $28)
+TILE_BG_GRASS_START_19     = SCREEN_RAM + $F0 + (13 * $28)
+TILE_BG_GRASS_START_20     = SCREEN_RAM + $F0 + (14 * $28)
+TILE_BG_GRASS_START_21     = SCREEN_RAM + $F0 + (15 * $28)
+
+TILE_BG_GRASS_START_22     = SCREEN_RAM + $F0 + (16 * $28)

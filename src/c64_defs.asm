@@ -24,6 +24,9 @@ LT_GREEN    = $0d
 LT_BLUE     = $0e
 LT_GRAY     = $0f
 
+; --- CHars ---
+BLANK_SPACE = $20       ; same in PETSCII and screencode!
+
 ; --- Screen Size ---
 SCREEN_WIDTH    = 320
 SCREEN_HEIGHT   = 200
@@ -203,8 +206,11 @@ H_COL_38       = %11110111   ; 38 Column mode (For scrolling)
 
 ; --- Zero Page Pointers ---
 ; the safe ones if you've not disabled all the ROMs
-ZP_PTR_1   = $FB  ; Safe Zero Page Uses $FB and $FC
-ZP_PTR_2   = $FD  ; Safe Zero Page Uses $FD and $FE
+ZP_PTR_1        = $FB  ; Safe Zero Page Uses $FB and $FC
+ZP_PTR_1_PAIR   = $FC  ; Safe Zero Page Uses $FB and $FC
+
+ZP_PTR_2        = $FD  ; Safe Zero Page Uses $FD and $FE
+ZP_PTR_2_PAIR   = $FE  ; Safe Zero Page Uses $FD and $FE
 
 
 

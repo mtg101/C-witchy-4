@@ -125,8 +125,10 @@ RASTER_IRQ_RIVER
     sta     BORDER_COL
     sta     BG_COL
     +RASTER_INTERRUPT_SET_ROW 0
+
     jsr     SPRITE_BOB
     jsr     TILE_BG_SCROLL
+
     +ACK_RASTER         
     +SET_IRQ RASTER_IRQ_TOP_BORDER
     +EXIT_FAST
