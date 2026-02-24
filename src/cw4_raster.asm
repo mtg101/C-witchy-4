@@ -104,6 +104,10 @@ RASTER_IRQ_GRASS
     lda     #GREEN
     sta     BORDER_COL
     sta     BG_COL
+
+
+    jsr     SPRITE_BOB
+
     +RASTER_INTERRUPT_SET_ROW (51-1+(8*22))
     +ACK_RASTER         
     +SET_IRQ RASTER_IRQ_RIVER
@@ -124,11 +128,10 @@ RASTER_IRQ_RIVER
     lda     #BLUE
     sta     BORDER_COL
     sta     BG_COL
-    +RASTER_INTERRUPT_SET_ROW 0
 
-    jsr     SPRITE_BOB
     jsr     TILE_BG_SCROLL
 
+    +RASTER_INTERRUPT_SET_ROW 0
     +ACK_RASTER         
     +SET_IRQ RASTER_IRQ_TOP_BORDER
     +EXIT_FAST
