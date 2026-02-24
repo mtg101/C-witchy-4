@@ -19,6 +19,7 @@
 !source     "src/c64_defs.asm"
 !source     "src/c64_maths.asm"
 !source     "src/c64_screen.asm"
+!source     "src/c64_system.asm"
 !source     "src/cw4_raster.asm"
 !source     "src/cw4_sprite.asm"
 !source     "src/cw4_tile_bg.asm"
@@ -26,6 +27,7 @@
 MAIN
     jsr     SCREEN_OFF
     jsr     ROM_CLR_SCREEN
+    jsr     SYS_NO_BASIC_ROM
     jsr     SCREEN_SET_HOZ_SCROLLING_38
     jsr     MATHS_SETUP_RNG
     jsr     RASTER_INTERRUPT_SETUP
