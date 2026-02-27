@@ -75,6 +75,7 @@ RASTER_IRQ_SKY
     nop
     nop
     nop
+    nop
     
     pha
 
@@ -92,6 +93,7 @@ RASTER_IRQ_SKY
     rti
 
 RASTER_IRQ_GRASS
+    nop
     nop
     nop
     nop
@@ -152,7 +154,7 @@ RASTER_IRQ_RIVER
     nop
     nop
     nop
-
+    nop
 
     pha
 
