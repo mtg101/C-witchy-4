@@ -1,33 +1,33 @@
 
 !macro TILE_BG_SCROLL_ROW .row_addr {
-    lda     #<.row_addr     ; set up safe zero page for offset
-    sta     ZP_PTR_1
-    lda     #>.row_addr
-    sta     ZP_PTR_1_PAIR
+    lda #<.row_addr     ; set up safe zero page for offset
+    sta ZP_PTR_1
+    lda #>.row_addr
+    sta ZP_PTR_1_PAIR
 
-    ldy     #0
+    ldy #0
 -
     iny                     ; Look at next char
-    lda     (ZP_PTR_1),y    ; Indirect read
+    lda (ZP_PTR_1),y    ; Indirect read
     dey                     ; Step back
-    sta     (ZP_PTR_1),y    ; Indirect write
+    sta (ZP_PTR_1),y    ; Indirect write
     iny                     ; Move forward to next pair
-    cpy     #38             ; Done all 37? (38-1 leaving right col alone to write later)
+    cpy #38             ; Done all 37? (38-1 leaving right col alone to write later)
     bne     -
 
     ;iny                     ; last col
-    lda     #BLANK_SPACE
-    sta     (ZP_PTR_1),y    ; blank final col
+    lda #BLANK_SPACE
+    sta (ZP_PTR_1),y    ; blank final col
 }
 
 TILE_BG_SETUP
     ; reset scroll offsets
-    jsr     SCREEN_RESET_SCROLL_X
-    jsr     SCREEN_RESET_SCROLL_Y
+    jsr SCREEN_RESET_SCROLL_X
+    jsr SCREEN_RESET_SCROLL_Y
 
 
     ; title text
-    ldy     #0
+    ldy #0
 
 ; TILE_BG_SETUP_LOOP
 ;     lda     .hellotext,y
@@ -42,43 +42,43 @@ TILE_BG_SETUP
 ; test tree
 ; col 38 is offscreen - but scroll_y is 0, which is shifted 7 bits left so 7 col pixels rows show in max col 37
 
-    lda     #$40        ; first 'udg' - tree base
-    sta     SCREEN_RAM+38+(40*16)
-    lda     #BROWN
-    sta     COLOR_RAM+38+(40*16)
+    lda #$40        ; first 'udg' - tree base
+    sta SCREEN_RAM+38+(40*16)
+    lda #BROWN
+    sta COLOR_RAM+38+(40*16)
 
-    lda     #$41        ; tree trunk
-    sta     SCREEN_RAM+38+(40*15)
-    lda     #BROWN
-    sta     COLOR_RAM+38+(40*15)
+    lda #$41        ; tree trunk
+    sta SCREEN_RAM+38+(40*15)
+    lda #BROWN
+    sta COLOR_RAM+38+(40*15)
 
-    lda     #$42        ; tree top
-    sta     SCREEN_RAM+38+(40*14)
-    lda     #LT_GREEN
-    sta     COLOR_RAM+38+(40*14)
+    lda #$42        ; tree top
+    sta SCREEN_RAM+38+(40*14)
+    lda #LT_GREEN
+    sta COLOR_RAM+38+(40*14)
 
-    lda     #$41        ; tree trunk top grass align
-    sta     SCREEN_RAM+38+(40*6)
-    lda     #BROWN
-    sta     COLOR_RAM+38+(40*6)
+    lda #$41        ; tree trunk top grass align
+    sta SCREEN_RAM+38+(40*6)
+    lda #BROWN
+    sta COLOR_RAM+38+(40*6)
 
-    lda     #$41        ; tree trunk bottom grass align
-    sta     SCREEN_RAM+38+(40*21)
-    lda     #BROWN
-    sta     COLOR_RAM+38+(40*21)
+    lda #$41        ; tree trunk bottom grass align
+    sta SCREEN_RAM+38+(40*21)
+    lda #BROWN
+    sta COLOR_RAM+38+(40*21)
 
     rts
 
 
 TILE_BG_SCROLL
     ; only every 8 frames for now...
-    lda     TILE_BG_FRAME_COUNTER
-    inc     TILE_BG_FRAME_COUNTER
-    and     #%00000111       ; 0-7
+    lda TILE_BG_FRAME_COUNTER
+    inc TILE_BG_FRAME_COUNTER
+    and #%00000111       ; 0-7
 
-    beq     TILE_BG_DEC_SCROLL_CHARS
+    beq TILE_BG_DEC_SCROLL_CHARS
 
-    jsr     SCREEN_DEC_SCROLL_X
+    jsr SCREEN_DEC_SCROLL_X
     rts                 ; TILE_BG_SCROLL
 
 TILE_BG_DEC_SCROLL_CHARS

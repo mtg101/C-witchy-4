@@ -5,11 +5,11 @@
 *=$0801
 !byte $0c,$08,$b5,$07,$9e,$20,$32,$30,$36,$32,$00,$00,$00
 
-    jmp     MAIN
+    jmp MAIN
 
 ; data in memory includes
-!source     "src/cw4_sprite_data.asm"
-!source     "src/cw4_tile_bg_data.asm"
+!source "src/cw4_sprite_data.asm"
+!source "src/cw4_tile_bg_data.asm"
 
 
 
@@ -25,33 +25,33 @@
 !source     "src/cw4_tile_bg.asm"
 
 MAIN
-    jsr     SCREEN_OFF
-    jsr     ROM_CLR_SCREEN
-    jsr     SCREEN_SET_HOZ_SCROLLING_38
-    jsr     MATHS_SETUP_RNG
+    jsr SCREEN_OFF
+    jsr ROM_CLR_SCREEN
+    jsr SCREEN_SET_HOZ_SCROLLING_38
+    jsr MATHS_SETUP_RNG
 
-    jsr     SYS_NO_BASIC_NO_KERNEL_ROM  ; also does raster irq setup
+    jsr SYS_NO_BASIC_NO_KERNEL_ROM  ; also does raster irq setup
     
-    jsr     SPRITE_INIT
-    jsr     SCREEN_CHAR_COPY_ROM_2800
-    jsr     SCREEN_CHAR_SET_2800
-    jsr     TILE_BG_SETUP
-    jsr     SCREEN_ON
+    jsr SPRITE_INIT
+    jsr SCREEN_CHAR_COPY_ROM_2800
+    jsr SCREEN_CHAR_SET_2800
+    jsr TILE_BG_SETUP
+    jsr SCREEN_ON
 
 MAIN_LOOP
     ; is raster flag set?
-    lda     RASTER_CHASE_BEAM
-    beq     MAIN_LOOP
+    lda RASTER_CHASE_BEAM
+    beq MAIN_LOOP
 
     ; bottom border flag set
 
     ; clear it
-    lda     #$00
-    sta     RASTER_CHASE_BEAM
+    lda #$00
+    sta RASTER_CHASE_BEAM
 
-    jsr     TILE_BG_SCROLL
+    jsr TILE_BG_SCROLL
 
-    jmp     MAIN_LOOP
+    jmp MAIN_LOOP
 
 ; --- End of code section ---
 !warn "Code ends at: ", *
