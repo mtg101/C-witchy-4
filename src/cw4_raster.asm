@@ -1,26 +1,14 @@
 
 
-; +ACK_RASTER to use
-; Use our "lazy" ASL $D019 macro
-!macro ACK_RASTER {
+!macro ACK_IRQ {
     asl VIC_INTER
 }
 
-; does all the stuff like KB and clocks the Kernel handles
-!macro EXIT_FULL {
-    jmp KERNEL_FULL_EXIT
-}
-
-
-!macro EXIT_FAST {
-    jmp KERNEL_FAST_EXIT
-}
-
 !macro SET_IRQ .irq_name {
-    lda #<.irq_name     ; Low byte
-    sta KERNEL_INT_PTR_LOW           ; Kernel pushes AXY then jumps to addr here
-    lda #>.irq_name     ; High byte
-    sta KERNEL_INT_PTR_HI           ; Kernel pushes AXY then jumps to addr here
+    lda #<.irq_name         ; Low byte
+    sta SELF_INT_PTR_LOW    ; Kernel pushes AXY then jumps to addr here
+    lda #>.irq_name         ; High byte
+    sta SELF_INT_PTR_HI     ; Kernel pushes AXY then jumps to addr here
 }
 
 ; only up to 255... !TODO
@@ -33,30 +21,26 @@
 }
 
 
-; 
+; SEI before called as we're in process of turning off kernel... (and re-anable after)
 RASTER_INTERRUPT_SETUP
-    sei             ; 1. Stop all interrupts while we mess with the wires
-    
-    ; 2. Disable the CIA "Timer" interrupts (the 60Hz system tick)
+    ; Disable the CIA "Timer" interrupts (the 60Hz system tick)
     lda #$7F
-    sta $DC0D       ; Clear CIA 1 interrupt control
-    sta $DD0D       ; Clear CIA 2 interrupt control
-    lda $DC0D       ; Acknowledge any pending CIA interrupts
-    lda $DD0D       ; Acknowledge any pending CIA interrupts
+    sta VIC_ICR_CIA_1       ; Clear CIA 1 interrupt control
+    sta VIC_ICR_CIA_2       ; Clear CIA 2 interrupt control
+    lda VIC_ICR_CIA_1       ; Acknowledge any pending CIA interrupts
+    lda VIC_ICR_CIA_2       ; Acknowledge any pending CIA interrupts
 
-    ; 3. Setup VIC-II to trigger a Raster Interrupt
+    ; Setup VIC-II to trigger a Raster Interrupt
     lda #$01
     sta VIC_IMASK   ; Enable Raster Interrupts only
 
-    ; 4. Set the line number where the interrupt triggers
+    ; Set the line number where the interrupt triggers
     ; default to row 0
     +RASTER_INTERRUPT_SET_ROW 0
 
-    ; 5. Point the Vector to our custom routine
+    ; Point the Vector to our custom routine
     +SET_IRQ RASTER_IRQ_TOP_BORDER
-
-    cli             ; 6. Re-enable interrupts
-    rts             ; Return to BASIC (your IRQ is now running in the background!)
+    rts             
 
 
 ; --- INTERRUPT ROUTINES ---
@@ -65,21 +49,34 @@ RASTER_IRQ_TOP_BORDER
     sta     BORDER_COL
     sta     BG_COL
     +RASTER_INTERRUPT_SET_ROW 50
-    +ACK_RASTER         
+    +ACK_IRQ
     +SET_IRQ RASTER_IRQ_SKY
-    +EXIT_FAST
+    rti
 
 RASTER_IRQ_SKY
-    inx
-    inx
-    inx
-    inx
-    inx
-    inx
-    inx
-    inx
-    inx
-    inx
+    nop             ; on real c64 can get away with triggering on real raster
+    nop             ; TV doesn't show full border so you don't notice the glitching
+    nop             ; for EMU... you see it - so we go early and pad
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    
+    pha
 
     lda     #CYAN
     sta     BORDER_COL
@@ -87,22 +84,37 @@ RASTER_IRQ_SKY
 
     jsr     SPRITE_BOB      ; still in IRQ for now...
 
+    pla
+
     +RASTER_INTERRUPT_SET_ROW (51-1+(8*6))
-    +ACK_RASTER         
+    +ACK_IRQ
     +SET_IRQ RASTER_IRQ_GRASS
-    +EXIT_FAST
+    rti
 
 RASTER_IRQ_GRASS
-    inx
-    inx
-    inx
-    inx
-    inx
-    inx
-    inx
-    inx
-    inx
-    inx
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+
+    pha
 
     lda     #GREEN
     sta     BORDER_COL
@@ -111,31 +123,49 @@ RASTER_IRQ_GRASS
     lda     #$01
     sta     RASTER_CHASE_BEAM
 
+    pla
+
     +RASTER_INTERRUPT_SET_ROW (51-1+(8*22))
-    +ACK_RASTER         
+    +ACK_IRQ
     +SET_IRQ RASTER_IRQ_RIVER
-    +EXIT_FAST
+    rti
 
 RASTER_IRQ_RIVER
-    inx
-    inx
-    inx
-    inx
-    inx
-    inx
-    inx
-    inx
-    inx
-    inx
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+
+
+    pha
 
     lda     #BLUE
     sta     BORDER_COL
     sta     BG_COL
 
+    pla
+
     +RASTER_INTERRUPT_SET_ROW 0
-    +ACK_RASTER         
+    +ACK_IRQ
     +SET_IRQ RASTER_IRQ_TOP_BORDER
-    +EXIT_FAST
+    rti
 
 ; raster flags go 1 when they're ready for main loop (which will need to clear)
 RASTER_CHASE_BEAM

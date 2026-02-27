@@ -27,10 +27,11 @@
 MAIN
     jsr     SCREEN_OFF
     jsr     ROM_CLR_SCREEN
-    jsr     SYS_NO_BASIC_ROM
     jsr     SCREEN_SET_HOZ_SCROLLING_38
     jsr     MATHS_SETUP_RNG
-    jsr     RASTER_INTERRUPT_SETUP
+
+    jsr     SYS_NO_BASIC_NO_KERNEL_ROM  ; also does raster irq setup
+    
     jsr     SPRITE_INIT
     jsr     SCREEN_CHAR_COPY_ROM_2800
     jsr     SCREEN_CHAR_SET_2800

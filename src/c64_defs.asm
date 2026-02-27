@@ -181,12 +181,16 @@ SPR_PTR6 = $07FE
 SPR_PTR7 = $07FF
 
 ; --- VIC-II Control Registers ---
-VIC_CR1 = $D011 ; CR1 Vertical scroll, Screen On/Off, Bitmap mode, Raster Bit 8
-VIC_CR2  = $D016 ; CR2 Horizontal scroll, Multi-color mode, 40/38 column switch
-RASTER_LINE = $D012 ; Current scanline (Read) / Trigger line (Write)
-MEM_SETUP   = $D018 ; high nibble: screen 1kb block, bits 1-3 char set 2kb block, bit 0 unused
-VIC_INTER   = $D019 ; Interrupt Status (ACK)
-VIC_IMASK   = $D01A ; Interrupt Control (Which ones are enabled?)
+VIC_CR1         = $D011 ; CR1 Vertical scroll, Screen On/Off, Bitmap mode, Raster Bit 8
+VIC_CR2         = $D016 ; CR2 Horizontal scroll, Multi-color mode, 40/38 column switch
+RASTER_LINE     = $D012 ; Current scanline (Read) / Trigger line (Write)
+MEM_SETUP       = $D018 ; high nibble: screen 1kb block, bits 1-3 char set 2kb block, bit 0 unused
+VIC_INTER       = $D019 ; Interrupt Status (ACK)
+VIC_IMASK       = $D01A ; Interrupt Control (Which ones are enabled?)
+VIC_ICR_CIA_1   = $DC0D ; int control reg - set to #$7F to disable timers (read to clear)
+VIC_ICR_CIA_2   = $DC0D ; int control reg - set to #$7F to disable NMIs (read to clear)
+
+
 
 ; --- $D011 (Vertical & Mode) Masks ---
 V_TEXT_MODE    = %00000000   ; Standard Text
@@ -218,11 +222,12 @@ ZP_PTR_2_PAIR   = $FE  ; Safe Zero Page Uses $FD and $FE
 ; --- Interrupts ---
 KERNEL_INT_PTR_LOW = $0314
 KERNEL_INT_PTR_HI = $0315
-KERNEL_FULL_EXIT = $EA31 ; does all the stuff like KB and clocks the Kernel handles
-KERNEL_FAST_EXIT = $FEB1 ; just pops the pushed registers that the interrupt system pushed automatically - still uses kernel
+KERNEL_FULL_EXIT = $EA31 ; jmp to exit kernel-based irq, does all the stuff like KB and clocks the Kernel handles
+KERNEL_FAST_EXIT = $FEB1 ; jmp to exit kernel-based irq, just pops the pushed registers that the interrupt system pushed automatically
 SELF_INT_PTR_LOW = $FFFE
 SELF_INT_PTR_HI = $FFFF
 
-
-
+ROM_DEFAULTS = %00110111    ; Default - BASIC, Kernal, and I/O all visible - ($37)
+ROM_NO_BASIC = %00110110    ; BASIC off, Kernal on, I/O on ($36)
+ROM_JUST_IO  = %00110101     ; BASIC off, Kernal off, I/O on ($35)
 
