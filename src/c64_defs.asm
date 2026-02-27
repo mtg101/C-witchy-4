@@ -46,6 +46,7 @@ SCREEN_RAM  = $0400
 DEFAULT_CHR = $14   ; Value for $D018 to use Uppercase/Graphics
 LOWER_CHR   = $16   ; Value for $D018 to use Lower/Upper
 
+SCREEN_HI_BYTE = $0288  ; used for some rom calls
 
 ; --- KERNAL JUMP TABLE ---
 ; PSA: these are all really slow...
@@ -212,6 +213,15 @@ ZP_PTR_1_PAIR   = $FC  ; Safe Zero Page Uses $FB and $FC
 ZP_PTR_2        = $FD  ; Safe Zero Page Uses $FD and $FE
 ZP_PTR_2_PAIR   = $FE  ; Safe Zero Page Uses $FD and $FE
 
+
+
+; --- Interrupts ---
+KERNEL_INT_PTR_LOW = $0314
+KERNEL_INT_PTR_HI = $0315
+KERNEL_FULL_EXIT = $EA31 ; does all the stuff like KB and clocks the Kernel handles
+KERNEL_FAST_EXIT = $FEB1 ; just pops the pushed registers that the interrupt system pushed automatically - still uses kernel
+SELF_INT_PTR_LOW = $FFFE
+SELF_INT_PTR_HI = $FFFF
 
 
 

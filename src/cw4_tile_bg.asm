@@ -118,7 +118,57 @@ TILE_BG_DEC_SCROLL_CHARS
 
     rts                 ; TILE_BG_SCROLL
 
+TILE_BG_SCROLL_SMC
+; ---------------------------------------------------------
+; SMC FULL ROW SCROLL (Screen + Color)
+; ---------------------------------------------------------
 
+; Parameters for this example: 
+; Screen Row Start: $0428 (Row 1)
+; Color Row Start:  $D828 (Row 1)
+
+PrepareScroll
+    ; 1. Setup Screen RAM addresses
+    lda #$28            ; Low Byte for offset 40
+    sta scr_src + 1
+    sta scr_dst + 1
+    inc scr_src + 1     ; Src is offset 41 (dest + 1)
+
+    lda #$04            ; High Byte for Screen
+    sta scr_src + 2
+    sta scr_dst + 2
+
+    ; 2. Setup Color RAM addresses
+    lda #$28            ; Same Low Byte
+    sta col_src + 1
+    sta col_dst + 1
+    inc col_src + 1
+
+    lda #$d8            ; High Byte for Color RAM
+    sta col_src + 2
+    sta col_dst + 2
+
+ExecuteScroll
+    ldx #$00
+.loop
+scr_src
+    lda $ffff,x         ; Poked: lda $0429,x
+scr_dst
+    sta $ffff,x         ; Poked: sta $0428,x
+
+col_src
+    lda $ffff,x         ; Poked: lda $d829,x
+col_dst
+    sta $ffff,x         ; Poked: sta $d828,x
+
+    inx
+    cpx #$27            ; 39 characters
+    bne .loop
+
+    ; Optional: Fill the last column (39) with a space/color
+    lda #$20            ; Space
+    sta $0428 + 39      ; Hardcoded or use more SMC
+    rts
 
 
 

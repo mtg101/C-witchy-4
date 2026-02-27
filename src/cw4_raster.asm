@@ -3,24 +3,24 @@
 ; +ACK_RASTER to use
 ; Use our "lazy" ASL $D019 macro
 !macro ACK_RASTER {
-    asl $D019
+    asl VIC_INTER
 }
 
 ; does all the stuff like KB and clocks the Kernel handles
 !macro EXIT_FULL {
-    jmp $EA31
+    jmp KERNEL_FULL_EXIT
 }
 
-; just pops the pushed registers that the interrupt system pushed automatically
+
 !macro EXIT_FAST {
-    jmp $FEB1
+    jmp KERNEL_FAST_EXIT
 }
 
 !macro SET_IRQ .irq_name {
     lda #<.irq_name     ; Low byte
-    sta $0314           ; Kernel pushes AXY then jumps to addr here
+    sta KERNEL_INT_PTR_LOW           ; Kernel pushes AXY then jumps to addr here
     lda #>.irq_name     ; High byte
-    sta $0315           ; Kernel pushes AXY then jumps to addr here
+    sta KERNEL_INT_PTR_HI           ; Kernel pushes AXY then jumps to addr here
 }
 
 ; only up to 255... !TODO
