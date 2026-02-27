@@ -25,9 +25,10 @@
 !source     "src/cw4_tile_bg.asm"
 
 MAIN
-    jsr     SCREEN_OFF
+    jsr SCREEN_OFF
+    lda 
+    sta     VIC_CR2
     jsr     ROM_CLR_SCREEN
-    jsr     SCREEN_SET_HOZ_SCROLLING_38
     jsr     MATHS_SETUP_RNG
 
     jsr     SYS_NO_BASIC_NO_KERNEL_ROM  ; also does raster irq setup
@@ -38,23 +39,45 @@ MAIN
     jsr     TILE_BG_SETUP
     jsr     SCREEN_ON
 
+
 MAIN_LOOP
     ; is raster flag set?
     lda     RASTER_CHASE_BEAM
-    beq     MAIN_LOOP
+    beq     MAIN_LOOP           ; not time yet...
 
-    ; bottom border flag set
 
-    ; clear it
+
+
+
+;;;    jsr     SPRITE_BOB      
+;;;    jsr     TILE_BG_SCROLL
+
+
+    ; clear raster flag
     lda     #$00
     sta     RASTER_CHASE_BEAM
 
-    jsr     TILE_BG_SCROLL
-
     jmp     MAIN_LOOP
+
+
+; the CR2 we need is all 0s for hi res, but we might want col mode later, so write like we need this...
+CW4_CR2_0 = %00000111
+CW4_CR2_1 = %00000110
+CW4_CR2_2 = %00000101
+CW4_CR2_3 = %00000100
+CW4_CR2_4 = %00000011
+CW4_CR2_5 = %00000010
+CW4_CR2_6 = %00000001
+CW4_CR2_7 = %00000000
+
+
+FRAME_COUNTER
+    !byte   $00
+
 
 ; --- End of code section ---
 !warn "Code ends at: ", *
 !if * > $7FFF {
     !error "Code has hit the bank 1 boundary!"
 }
+

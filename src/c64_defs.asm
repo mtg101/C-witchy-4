@@ -182,7 +182,18 @@ SPR_PTR7 = $07FF
 
 ; --- VIC-II Control Registers ---
 VIC_CR1         = $D011 ; CR1 Vertical scroll, Screen On/Off, Bitmap mode, Raster Bit 8
+; 0-2	YSCROLL	Vertical Fine Scroll. (0-7 pixels)
+; 3	RSEL	Row Select. 1 = 25 rows (standard), 0 = 24 rows.
+; 4	DEN	Display Enable. 1 = Screen ON, 0 = Screen OFF (Border only).
+; 5	BMM	Bitmap Mode. 1 = On, 0 = Text mode.
+; 6	ECM	Extended Color Mode. 1 = On, 0 = Off.
+; 7	RST8	9th Bit of Raster Line. Used for lines 256–311.
 VIC_CR2         = $D016 ; CR2 Horizontal scroll, Multi-color mode, 40/38 column switch
+; 0-2	XSCROLL	Horizontal Fine Scroll. (0–7 pixels)
+; 3	CSEL	Column Select. 1 = 40 columns (standard), 0 = 38 columns.
+; 4	MCM	Multi-Color Mode. 1 = ON, 0 = OFF (Hi-Res).
+; 5	RES	Reset. (Usually left at 0; setting to 1 freezes the VIC-II).
+; 6-7	Unused	Not connected.
 RASTER_LINE     = $D012 ; Current scanline (Read) / Trigger line (Write)
 MEM_SETUP       = $D018 ; high nibble: screen 1kb block, bits 1-3 char set 2kb block, bit 0 unused
 VIC_INTER       = $D019 ; Interrupt Status (ACK)

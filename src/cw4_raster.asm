@@ -83,8 +83,6 @@ RASTER_IRQ_SKY
     sta     BORDER_COL
     sta     BG_COL
 
-    jsr     SPRITE_BOB      ; still in IRQ for now...
-
     pla
 
     +RASTER_INTERRUPT_SET_ROW (51-1+(8*6))

@@ -71,17 +71,6 @@ TILE_BG_SETUP
 
 
 TILE_BG_SCROLL
-    ; only every 8 frames for now...
-    lda     TILE_BG_FRAME_COUNTER
-    inc     TILE_BG_FRAME_COUNTER
-    and     #%00000111       ; 0-7
-
-    beq     TILE_BG_DEC_SCROLL_CHARS
-
-    jsr     SCREEN_DEC_SCROLL_X
-    rts                 ; TILE_BG_SCROLL
-
-TILE_BG_DEC_SCROLL_CHARS
     ; rows 6-22
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_6
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_7
@@ -107,14 +96,6 @@ TILE_BG_DEC_SCROLL_CHARS
 
     ; reset scroll x
     jsr     SCREEN_RESET_SCROLL_X
-
-
-    ; procgen tree
-    ; not yet...
-
-    ; fill right column with blanks and trees
-    ; blanks for now...
-    ; 16 loop blanking col 38
 
     rts                 ; TILE_BG_SCROLL
 
@@ -174,9 +155,6 @@ col_dst
 
 .hellotext
     !scr    "c-witchy-4",0
-
-TILE_BG_FRAME_COUNTER
-    !byte   $00
 
 ; grass starts at row: 6
 ; goes 16 rows to: 22
