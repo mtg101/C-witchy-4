@@ -45,9 +45,9 @@ RASTER_INTERRUPT_SETUP
 
 ; --- INTERRUPT ROUTINES ---
 RASTER_IRQ_TOP_BORDER
-    lda     #BLACK
-    sta     BORDER_COL
-    sta     BG_COL
+    lda #BLACK
+    sta BORDER_COL
+    sta BG_COL
     +RASTER_INTERRUPT_SET_ROW 50
     +ACK_IRQ
     +SET_IRQ RASTER_IRQ_SKY
@@ -79,9 +79,11 @@ RASTER_IRQ_SKY
     
     pha
 
-    lda     #CYAN
-    sta     BORDER_COL
-    sta     BG_COL
+    lda #CYAN
+    sta BORDER_COL
+    sta BG_COL
+
+    jsr SPRITE_BOB      ; still in IRQ for now...
 
     pla
 
@@ -116,12 +118,12 @@ RASTER_IRQ_GRASS
 
     pha
 
-    lda     #GREEN
-    sta     BORDER_COL
-    sta     BG_COL
+    lda #GREEN
+    sta BORDER_COL
+    sta BG_COL
 
-    lda     #$01
-    sta     RASTER_CHASE_BEAM
+    lda #$01
+    sta RASTER_CHASE_BEAM
 
     pla
 
@@ -156,9 +158,9 @@ RASTER_IRQ_RIVER
 
     pha
 
-    lda     #BLUE
-    sta     BORDER_COL
-    sta     BG_COL
+    lda #BLUE
+    sta BORDER_COL
+    sta BG_COL
 
     pla
 

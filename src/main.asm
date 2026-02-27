@@ -5,11 +5,11 @@
 *=$0801
 !byte $0c,$08,$b5,$07,$9e,$20,$32,$30,$36,$32,$00,$00,$00
 
-    jmp     MAIN
+    jmp MAIN
 
 ; data in memory includes
-!source     "src/cw4_sprite_data.asm"
-!source     "src/cw4_tile_bg_data.asm"
+!source "src/cw4_sprite_data.asm"
+!source "src/cw4_tile_bg_data.asm"
 
 
 
@@ -31,7 +31,7 @@ MAIN
     jsr     ROM_CLR_SCREEN
     jsr     MATHS_SETUP_RNG
 
-    jsr     SYS_NO_BASIC_NO_KERNEL_ROM  ; also does raster irq setup
+    jsr SYS_NO_BASIC_NO_KERNEL_ROM  ; also does raster irq setup
     
     jsr     SPRITE_INIT
     jsr     SCREEN_CHAR_COPY_ROM_2800
