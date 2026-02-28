@@ -6,9 +6,9 @@
 
 !macro SET_IRQ .irq_name {
     lda #<.irq_name         ; Low byte
-    sta SELF_INT_PTR_LOW    ; Kernel pushes AXY then jumps to addr here
+    sta SELF_INT_PTR_LOW    
     lda #>.irq_name         ; High byte
-    sta SELF_INT_PTR_HI     ; Kernel pushes AXY then jumps to addr here
+    sta SELF_INT_PTR_HI     
 }
 
 ; only up to 255... !TODO
