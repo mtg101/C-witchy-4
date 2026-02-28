@@ -20,6 +20,22 @@
     sta VIC_CR1
 }
 
+!macro PUSH_ALL {
+    pha         ; Push Accumulator to stack
+    txa         ; Transfer X to Accumulator...
+    pha         ; ...then push it
+    tya         ; Transfer Y to Accumulator...
+    pha         ; ...then push it
+}
+
+!macro PULL_ALL {
+    pla         ; Pull Y from stack into Accumulator
+    tay         ; Transfer it back to Y
+    pla         ; Pull X from stack into Accumulator
+    tax         ; Transfer it back to X
+    pla         ; Pull original Accumulator from stack
+}
+
 
 ; SEI before called as we're in process of turning off kernel... (and re-anable after)
 RASTER_INTERRUPT_SETUP
@@ -45,9 +61,11 @@ RASTER_INTERRUPT_SETUP
 
 ; --- INTERRUPT ROUTINES ---
 RASTER_IRQ_TOP_BORDER
+    +PUSH_ALL
     lda #BLACK
     sta BORDER_COL
     sta BG_COL
+    +PULL_ALL
     +RASTER_INTERRUPT_SET_ROW 50
     +ACK_IRQ
     +SET_IRQ RASTER_IRQ_SKY
@@ -71,13 +89,8 @@ RASTER_IRQ_SKY
     nop
     nop
     nop
-    nop
-    nop
-    nop
-    nop
-    nop
     
-    pha
+    +PUSH_ALL
 
     lda #CYAN
     sta BORDER_COL
@@ -85,8 +98,7 @@ RASTER_IRQ_SKY
 
     jsr SPRITE_BOB      ; still in IRQ for now...
 
-    pla
-
+    +PULL_ALL
     +RASTER_INTERRUPT_SET_ROW (51-1+(8*6))
     +ACK_IRQ
     +SET_IRQ RASTER_IRQ_GRASS
@@ -110,13 +122,8 @@ RASTER_IRQ_GRASS
     nop
     nop
     nop
-    nop
-    nop
-    nop
-    nop
-    nop
 
-    pha
+    +PUSH_ALL
 
     lda #GREEN
     sta BORDER_COL
@@ -125,8 +132,7 @@ RASTER_IRQ_GRASS
     lda #$01
     sta RASTER_CHASE_BEAM
 
-    pla
-
+    +PULL_ALL
     +RASTER_INTERRUPT_SET_ROW (51-1+(8*22))
     +ACK_IRQ
     +SET_IRQ RASTER_IRQ_RIVER
@@ -150,20 +156,14 @@ RASTER_IRQ_RIVER
     nop
     nop
     nop
-    nop
-    nop
-    nop
-    nop
-    nop
 
-    pha
+    +PUSH_ALL
 
     lda #BLUE
     sta BORDER_COL
     sta BG_COL
 
-    pla
-
+    +PULL_ALL
     +RASTER_INTERRUPT_SET_ROW 0
     +ACK_IRQ
     +SET_IRQ RASTER_IRQ_TOP_BORDER

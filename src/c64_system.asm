@@ -15,9 +15,12 @@ SYS_NO_BASIC_NO_KERNEL_ROM
     lda #ROM_JUST_IO
     sta $01     ; BASIC & kernel both gone
 
+    ; reclaim all of the stack
+    ldx #$ff    ; the very top of the stack ($01FF)
+    txs         ; set it    
+    
     jsr RASTER_INTERRUPT_SETUP  ; take over irq
 
     cli         ; Re-enable interrupts
-    rts
+    jmp SYS_NO_BASIC_NO_KERNEL_ROM_DONE
 
-        

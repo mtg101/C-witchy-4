@@ -1,23 +1,23 @@
 
 !macro TILE_BG_SCROLL_ROW .row_addr, .proc_row {
     lda #<.row_addr     ; set up safe zero page for offset
-    sta ZP_PTR_1
+    sta ZP_PTR_2
     lda #>.row_addr
-    sta ZP_PTR_1_PAIR
+    sta ZP_PTR_2_PAIR
 
     ldy #0
 -
     iny                 ; Look at next char
-    lda (ZP_PTR_1),y    ; Indirect read
+    lda (ZP_PTR_2),y    ; Indirect read
     dey                 ; Step back
-    sta (ZP_PTR_1),y    ; Indirect write
+    sta (ZP_PTR_2),y    ; Indirect write
     iny                 ; Move forward to next pair
     cpy #38             ; Done all 37? (38-1 leaving right col alone to write later)
     bne     -
 
     ;iny                ; last col from procgen
     lda PROCGEN_COL_BUFF + .proc_row
-    sta (ZP_PTR_1),y    
+    sta (ZP_PTR_2),y    
 }
 
 TILE_BG_SETUP
@@ -47,7 +47,29 @@ TILE_BG_SCROLL
 
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_18, 12
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_19, 13
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_20, 14
+    
+;    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_20, 14
+
+    lda #<TILE_BG_GRASS_START_20
+    sta ZP_PTR_2
+    lda #>TILE_BG_GRASS_START_20
+    sta ZP_PTR_2_PAIR
+
+    ldy #0
+-
+    iny                 ; Look at next char
+    lda (ZP_PTR_2),y    ; Indirect read
+    dey                 ; Step back
+    sta (ZP_PTR_2),y    ; Indirect write
+    iny                 ; Move forward to next pair
+    cpy #38             ; Done all 37? (38-1 leaving right col alone to write later)
+    bne     -
+
+    ;iny                ; last col from procgen
+    lda PROCGEN_COL_BUFF + 14
+    sta (ZP_PTR_2),y    
+
+
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_21, 15
 
     rts                 ; TILE_BG_SCROLL
@@ -99,7 +121,7 @@ PROCGEN_COL_BUFF
     !fill 16, $00 
 
 
-TILE_BG_SCROLL_SMC
+;TILE_BG_SCROLL_SMC
 ; ---------------------------------------------------------
 ; SMC FULL ROW SCROLL (Screen + Color)
 ; ---------------------------------------------------------
@@ -108,57 +130,57 @@ TILE_BG_SCROLL_SMC
 ; Screen Row Start: $0428 (Row 1)
 ; Color Row Start:  $D828 (Row 1)
 
-PrepareScroll
-    ; 1. Setup Screen RAM addresses
-    lda #$28            ; Low Byte for offset 40
-    sta scr_src + 1
-    sta scr_dst + 1
-    inc scr_src + 1     ; Src is offset 41 (dest + 1)
+; PrepareScroll
+;     ; 1. Setup Screen RAM addresses
+;     lda #$28            ; Low Byte for offset 40
+;     sta scr_src + 1
+;     sta scr_dst + 1
+;     inc scr_src + 1     ; Src is offset 41 (dest + 1)
 
-    lda #$04            ; High Byte for Screen
-    sta scr_src + 2
-    sta scr_dst + 2
+;     lda #$04            ; High Byte for Screen
+;     sta scr_src + 2
+;     sta scr_dst + 2
 
-    ; 2. Setup Color RAM addresses
-    lda #$28            ; Same Low Byte
-    sta col_src + 1
-    sta col_dst + 1
-    inc col_src + 1
+;     ; 2. Setup Color RAM addresses
+;     lda #$28            ; Same Low Byte
+;     sta col_src + 1
+;     sta col_dst + 1
+;     inc col_src + 1
 
-    lda #$d8            ; High Byte for Color RAM
-    sta col_src + 2
-    sta col_dst + 2
+;     lda #$d8            ; High Byte for Color RAM
+;     sta col_src + 2
+;     sta col_dst + 2
 
-ExecuteScroll
-    ldx #$00
-.loop
-scr_src
-    lda $ffff,x         ; Poked: lda $0429,x
-scr_dst
-    sta $ffff,x         ; Poked: sta $0428,x
+; ExecuteScroll
+;     ldx #$00
+; .loop
+; scr_src
+;     lda $ffff,x         ; Poked: lda $0429,x
+; scr_dst
+;     sta $ffff,x         ; Poked: sta $0428,x
 
-col_src
-    lda $ffff,x         ; Poked: lda $d829,x
-col_dst
-    sta $ffff,x         ; Poked: sta $d828,x
+; col_src
+;     lda $ffff,x         ; Poked: lda $d829,x
+; col_dst
+;     sta $ffff,x         ; Poked: sta $d828,x
 
-    inx
-    cpx #$27            ; 39 characters
-    bne .loop
+;     inx
+;     cpx #$27            ; 39 characters
+;     bne .loop
 
-    ; Optional: Fill the last column (39) with a space/color
-    lda #$20            ; Space
-    sta $0428 + 39      ; Hardcoded or use more SMC
-    rts
+;     ; Optional: Fill the last column (39) with a space/color
+;     lda #$20            ; Space
+;     sta $0428 + 39      ; Hardcoded or use more SMC
+;     rts
 
 
 
-.hellotext
-    !scr    "c-witchy-4",0
+; .hellotext
+;     !scr    "c-witchy-4",0
 
 ; grass starts at row: 6
 ; goes 16 rows to: 22
-; base is SCREEN_RAM $4000
+; base is SCREEN_RAM $0400
 ; add (40 * y) = (40 * 6) = 240 = $F0
 ; each extra row adds 40 = $28
 TILE_BG_GRASS_START_6     = SCREEN_RAM + $F0 + (0 * $28)

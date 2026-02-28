@@ -11,7 +11,7 @@
 !source "src/cw4_sprite_data.asm"
 !source "src/cw4_tile_bg_data.asm"
 
-; all the code no location specific data, bank 1 full 16k to use
+; all the code (no location specific data) in bank 1 full 16k to use
 *=$4000
 
 !source "src/c64_defs.asm"
@@ -28,12 +28,13 @@ MAIN
     sta VIC_CR2
     jsr ROM_CLR_SCREEN
     jsr MATHS_SETUP_RNG
-
-    jsr SYS_NO_BASIC_NO_KERNEL_ROM  ; also does raster irq setup
-    
-    jsr SPRITE_INIT
     jsr SCREEN_CHAR_COPY_ROM_2800
     jsr SCREEN_CHAR_SET_2800
+
+    jmp SYS_NO_BASIC_NO_KERNEL_ROM  ; also does raster irq setup - jmp as it's reclaiming the stack
+SYS_NO_BASIC_NO_KERNEL_ROM_DONE    
+    
+    jsr SPRITE_INIT
     jsr TILE_BG_SETUP
     jsr SCREEN_ON
 
