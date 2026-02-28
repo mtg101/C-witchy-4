@@ -1,5 +1,5 @@
 
-!macro TILE_BG_SCROLL_ROW .row_addr {
+!macro TILE_BG_SCROLL_ROW .row_addr, .proc_row {
     lda #<.row_addr     ; set up safe zero page for offset
     sta ZP_PTR_1
     lda #>.row_addr
@@ -7,17 +7,17 @@
 
     ldy #0
 -
-    iny                     ; Look at next char
+    iny                 ; Look at next char
     lda (ZP_PTR_1),y    ; Indirect read
-    dey                     ; Step back
+    dey                 ; Step back
     sta (ZP_PTR_1),y    ; Indirect write
-    iny                     ; Move forward to next pair
+    iny                 ; Move forward to next pair
     cpy #38             ; Done all 37? (38-1 leaving right col alone to write later)
     bne     -
 
-    ;iny                     ; last col
-    lda #BLANK_SPACE
-    sta (ZP_PTR_1),y    ; blank final col
+    ;iny                ; last col from procgen
+    lda PROCGEN_COL_BUFF + .proc_row
+    sta (ZP_PTR_1),y    
 }
 
 TILE_BG_SETUP
@@ -29,50 +29,32 @@ TILE_BG_SETUP
 
 
 TILE_BG_SCROLL
-    ; 17 rows 6-22
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_6
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_7
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_8
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_9
+    ; 16 rows 6-21
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_6, 0
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_7, 1
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_8, 2
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_9, 3
 
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_10
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_11
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_12
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_13
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_10, 4
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_11, 5
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_12, 6
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_13, 7
 
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_14
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_15
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_16
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_17
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_14, 8
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_15, 9
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_16, 10
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_17, 11
 
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_18
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_19
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_20
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_21
-
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_22
-
-    ; add procgen
-    lda PROCGEN_COL_BUFF
-    sta SCREEN_RAM+38+(40*6)
-
-    lda PROCGEN_COL_BUFF + 17
-    sta SCREEN_RAM+38+(40*21)
-
-    lda PROCGEN_COL_BUFF + 7
-    sta SCREEN_RAM+38+(40*16)
-
-    lda PROCGEN_COL_BUFF + 8
-    sta SCREEN_RAM+38+(40*15)
-
-    lda PROCGEN_COL_BUFF + 9
-    sta SCREEN_RAM+38+(40*14)
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_18, 12
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_19, 13
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_20, 14
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_21, 15
 
     rts                 ; TILE_BG_SCROLL
 
 TILE_BG_PROCGEN
     ; clear buf
-    lda #$20
+    lda #BLANK_SPACE
     sta PROCGEN_COL_BUFF
     sta PROCGEN_COL_BUFF+1
     sta PROCGEN_COL_BUFF+2
@@ -90,7 +72,6 @@ TILE_BG_PROCGEN
     sta PROCGEN_COL_BUFF+14
     sta PROCGEN_COL_BUFF+15
     sta PROCGEN_COL_BUFF+16
-    sta PROCGEN_COL_BUFF+17
 
     lda MATHS_RNG
     and #%00001111       ; 0-16
@@ -99,23 +80,23 @@ TILE_BG_PROCGEN
     ; draw stuff
     lda #$41
     sta PROCGEN_COL_BUFF
-    sta PROCGEN_COL_BUFF+17
+    sta PROCGEN_COL_BUFF+15
 
     lda #$40
-    sta PROCGEN_COL_BUFF+7
+    sta PROCGEN_COL_BUFF+9
 
     lda #$41
     sta PROCGEN_COL_BUFF+8
 
     lda #$42
-    sta PROCGEN_COL_BUFF+9
+    sta PROCGEN_COL_BUFF+7
 
 TILE_BG_PROCGEN_DONE
 
     rts                 ; TILE_BG_PROCGEN
 
 PROCGEN_COL_BUFF
-    !fill 17, $00 
+    !fill 16, $00 
 
 
 TILE_BG_SCROLL_SMC
