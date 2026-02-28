@@ -192,8 +192,8 @@ VIC_CR2         = $D016 ; CR2 Horizontal scroll, Multi-color mode, 40/38 column 
 ; 0-2	XSCROLL	Horizontal Fine Scroll. (0–7 pixels)
 ; 3	CSEL	Column Select. 1 = 40 columns (standard), 0 = 38 columns.
 ; 4	MCM	Multi-Color Mode. 1 = ON, 0 = OFF (Hi-Res).
-; 5	RES	Reset. (Usually left at 0; setting to 1 freezes the VIC-II).
-; 6-7	Unused	Not connected.
+; 5	RES	Reset - always 0!
+; 6-7	Unused	Not connected. Leave as 1
 RASTER_LINE     = $D012 ; Current scanline (Read) / Trigger line (Write)
 MEM_SETUP       = $D018 ; high nibble: screen 1kb block, bits 1-3 char set 2kb block, bit 0 unused
 VIC_INTER       = $D019 ; Interrupt Status (ACK)

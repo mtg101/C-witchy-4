@@ -25,53 +25,11 @@ TILE_BG_SETUP
     jsr SCREEN_RESET_SCROLL_X
     jsr SCREEN_RESET_SCROLL_Y
 
-
-    ; title text
-    ldy #0
-
-; TILE_BG_SETUP_LOOP
-;     lda     .hellotext,y
-;     beq     +
-;     sta     SCREEN_RAM+15+SCREEN_WIDTH_CHARS,y
-;     lda     #PURPLE
-;     sta     COLOR_RAM+15+SCREEN_WIDTH_CHARS,y
-;     iny
-;     jmp     TILE_BG_SETUP_LOOP
-; +
-
-; test tree
-; col 38 is offscreen - but scroll_y is 0, which is shifted 7 bits left so 7 col pixels rows show in max col 37
-
-    lda #$40        ; first 'udg' - tree base
-    sta SCREEN_RAM+38+(40*16)
-    lda #BROWN
-    sta COLOR_RAM+38+(40*16)
-
-    lda #$41        ; tree trunk
-    sta SCREEN_RAM+38+(40*15)
-    lda #BROWN
-    sta COLOR_RAM+38+(40*15)
-
-    lda #$42        ; tree top
-    sta SCREEN_RAM+38+(40*14)
-    lda #LT_GREEN
-    sta COLOR_RAM+38+(40*14)
-
-    lda #$41        ; tree trunk top grass align
-    sta SCREEN_RAM+38+(40*6)
-    lda #BROWN
-    sta COLOR_RAM+38+(40*6)
-
-    lda #$41        ; tree trunk bottom grass align
-    sta SCREEN_RAM+38+(40*21)
-    lda #BROWN
-    sta COLOR_RAM+38+(40*21)
-
     rts
 
 
 TILE_BG_SCROLL
-    ; rows 6-22
+    ; 17 rows 6-22
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_6
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_7
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_8
@@ -94,10 +52,71 @@ TILE_BG_SCROLL
 
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_22
 
-    ; reset scroll x
-    jsr     SCREEN_RESET_SCROLL_X
+    ; add procgen
+    lda PROCGEN_COL_BUFF
+    sta SCREEN_RAM+38+(40*6)
+
+    lda PROCGEN_COL_BUFF + 17
+    sta SCREEN_RAM+38+(40*21)
+
+    lda PROCGEN_COL_BUFF + 7
+    sta SCREEN_RAM+38+(40*16)
+
+    lda PROCGEN_COL_BUFF + 8
+    sta SCREEN_RAM+38+(40*15)
+
+    lda PROCGEN_COL_BUFF + 9
+    sta SCREEN_RAM+38+(40*14)
 
     rts                 ; TILE_BG_SCROLL
+
+TILE_BG_PROCGEN
+    ; clear buf
+    lda #$20
+    sta PROCGEN_COL_BUFF
+    sta PROCGEN_COL_BUFF+1
+    sta PROCGEN_COL_BUFF+2
+    sta PROCGEN_COL_BUFF+3
+    sta PROCGEN_COL_BUFF+4
+    sta PROCGEN_COL_BUFF+5
+    sta PROCGEN_COL_BUFF+6
+    sta PROCGEN_COL_BUFF+7
+    sta PROCGEN_COL_BUFF+8
+    sta PROCGEN_COL_BUFF+9
+    sta PROCGEN_COL_BUFF+10
+    sta PROCGEN_COL_BUFF+11
+    sta PROCGEN_COL_BUFF+12
+    sta PROCGEN_COL_BUFF+13
+    sta PROCGEN_COL_BUFF+14
+    sta PROCGEN_COL_BUFF+15
+    sta PROCGEN_COL_BUFF+16
+    sta PROCGEN_COL_BUFF+17
+
+    lda MATHS_RNG
+    and #%00001111       ; 0-16
+    bne TILE_BG_PROCGEN_DONE    ; 1 in 32 stuff
+
+    ; draw stuff
+    lda #$41
+    sta PROCGEN_COL_BUFF
+    sta PROCGEN_COL_BUFF+17
+
+    lda #$40
+    sta PROCGEN_COL_BUFF+7
+
+    lda #$41
+    sta PROCGEN_COL_BUFF+8
+
+    lda #$42
+    sta PROCGEN_COL_BUFF+9
+
+TILE_BG_PROCGEN_DONE
+
+    rts                 ; TILE_BG_PROCGEN
+
+PROCGEN_COL_BUFF
+    !fill 17, $00 
+
 
 TILE_BG_SCROLL_SMC
 ; ---------------------------------------------------------

@@ -11,64 +11,117 @@
 !source "src/cw4_sprite_data.asm"
 !source "src/cw4_tile_bg_data.asm"
 
-
-
 ; all the code no location specific data, bank 1 full 16k to use
 *=$4000
 
-!source     "src/c64_defs.asm"
-!source     "src/c64_maths.asm"
-!source     "src/c64_screen.asm"
-!source     "src/c64_system.asm"
-!source     "src/cw4_raster.asm"
-!source     "src/cw4_sprite.asm"
-!source     "src/cw4_tile_bg.asm"
+!source "src/c64_defs.asm"
+!source "src/c64_maths.asm"
+!source "src/c64_screen.asm"
+!source "src/c64_system.asm"
+!source "src/cw4_raster.asm"
+!source "src/cw4_sprite.asm"
+!source "src/cw4_tile_bg.asm"
 
 MAIN
     jsr SCREEN_OFF
-    lda 
-    sta     VIC_CR2
-    jsr     ROM_CLR_SCREEN
-    jsr     MATHS_SETUP_RNG
+    lda CW4_CR2_0                   ; effectively frame 0, fully right shifted
+    sta VIC_CR2
+    jsr ROM_CLR_SCREEN
+    jsr MATHS_SETUP_RNG
 
     jsr SYS_NO_BASIC_NO_KERNEL_ROM  ; also does raster irq setup
     
-    jsr     SPRITE_INIT
-    jsr     SCREEN_CHAR_COPY_ROM_2800
-    jsr     SCREEN_CHAR_SET_2800
-    jsr     TILE_BG_SETUP
-    jsr     SCREEN_ON
-
+    jsr SPRITE_INIT
+    jsr SCREEN_CHAR_COPY_ROM_2800
+    jsr SCREEN_CHAR_SET_2800
+    jsr TILE_BG_SETUP
+    jsr SCREEN_ON
 
 MAIN_LOOP
     ; is raster flag set?
-    lda     RASTER_CHASE_BEAM
-    beq     MAIN_LOOP           ; not time yet...
+    lda RASTER_CHASE_BEAM
+    beq MAIN_LOOP           ; not time yet...
 
+    inc FRAME_COUNTER
+    lda FRAME_COUNTER
+    and #%00000111           ; 0-7
 
+    ; are jump tables worth it?
+    beq FRAME_0
+    cmp #%00000001
+    beq FRAME_1
+    cmp #%00000010
+    beq FRAME_2
+    cmp #%00000011
+    beq FRAME_3
+    cmp #%00000100
+    beq FRAME_4
+    cmp #%00000101
+    beq FRAME_5
+    cmp #%00000110
+    beq FRAME_6
+    cmp #%00000111       ; we know it's 7... but keep code clean and constant
+    beq FRAME_7         ; don't fall through, cleaner code, and constant
 
-
-
-;;;    jsr     SPRITE_BOB      
-;;;    jsr     TILE_BG_SCROLL
-
-
+FRAME_DONE
     ; clear raster flag
-    lda     #$00
-    sta     RASTER_CHASE_BEAM
+    lda #$00
+    sta RASTER_CHASE_BEAM
+    jmp MAIN_LOOP
 
-    jmp     MAIN_LOOP
+FRAME_0 
+    jsr TILE_BG_SCROLL
+    lda #CW4_CR2_0                   
+    sta VIC_CR2
+    jmp FRAME_DONE
+
+FRAME_1
+    jsr TILE_BG_PROCGEN
+    lda #CW4_CR2_1
+    sta VIC_CR2
+    jmp FRAME_DONE
+
+FRAME_2
+    lda #CW4_CR2_2
+    sta VIC_CR2
+    jmp FRAME_DONE
+
+FRAME_3
+    lda #CW4_CR2_3
+    sta VIC_CR2
+    jmp FRAME_DONE
+
+FRAME_4
+    lda #CW4_CR2_4
+    sta VIC_CR2
+    jmp FRAME_DONE
+
+FRAME_5
+    lda #CW4_CR2_5
+    sta VIC_CR2
+    jmp FRAME_DONE
+
+FRAME_6
+    lda #CW4_CR2_6
+    sta VIC_CR2
+    jmp FRAME_DONE
+
+FRAME_7
+    lda #CW4_CR2_7
+    sta VIC_CR2
+    jmp FRAME_DONE
+
+; all options jumped back
 
 
-; the CR2 we need is all 0s for hi res, but we might want col mode later, so write like we need this...
-CW4_CR2_0 = %00000111
-CW4_CR2_1 = %00000110
-CW4_CR2_2 = %00000101
-CW4_CR2_3 = %00000100
-CW4_CR2_4 = %00000011
-CW4_CR2_5 = %00000010
-CW4_CR2_6 = %00000001
-CW4_CR2_7 = %00000000
+CW4_CR2_0 = %11000111
+CW4_CR2_1 = %11000110
+CW4_CR2_2 = %11000101
+CW4_CR2_3 = %11000100
+CW4_CR2_4 = %11000011
+CW4_CR2_5 = %11000010
+CW4_CR2_6 = %11000001
+CW4_CR2_7 = %11000000
 
 
 FRAME_COUNTER
