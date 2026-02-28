@@ -28,8 +28,8 @@ MAIN
     sta VIC_CR2
     jsr ROM_CLR_SCREEN
     jsr MATHS_SETUP_RNG
-    jsr SCREEN_CHAR_COPY_ROM_2800
-    jsr SCREEN_CHAR_SET_2800
+    jsr SCREEN_CHAR_COPY_ROM_3000
+    jsr SCREEN_CHAR_SET_3000
 
     jmp SYS_NO_BASIC_NO_KERNEL_ROM  ; also does raster irq setup - jmp as it's reclaiming the stack
 SYS_NO_BASIC_NO_KERNEL_ROM_DONE    

@@ -1,23 +1,23 @@
 
 !macro TILE_BG_SCROLL_ROW .row_addr, .proc_row {
     lda #<.row_addr     ; set up safe zero page for offset
-    sta ZP_PTR_2
+    sta ZP_PTR_MEH
     lda #>.row_addr
-    sta ZP_PTR_2_PAIR
+    sta ZP_PTR_MEH_PAIR
 
     ldy #0
 -
     iny                 ; Look at next char
-    lda (ZP_PTR_2),y    ; Indirect read
+    lda (ZP_PTR_MEH),y  ; Indirect read
     dey                 ; Step back
-    sta (ZP_PTR_2),y    ; Indirect write
+    sta (ZP_PTR_MEH),y  ; Indirect write
     iny                 ; Move forward to next pair
     cpy #38             ; Done all 37? (38-1 leaving right col alone to write later)
     bne     -
 
     ;iny                ; last col from procgen
     lda PROCGEN_COL_BUFF + .proc_row
-    sta (ZP_PTR_2),y    
+    sta (ZP_PTR_MEH),y    
 }
 
 TILE_BG_SETUP
@@ -30,15 +30,15 @@ TILE_BG_SETUP
 
 TILE_BG_SCROLL
     ; 16 rows 6-21
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_6, 0
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_7, 1
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_8, 2
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_9, 3
+    ; +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_6, 0
+    ; +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_7, 1
+    ; +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_8, 2
+    ; +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_9, 3
 
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_10, 4
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_11, 5
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_12, 6
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_13, 7
+    ; +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_10, 4
+    ; +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_11, 5
+    ; +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_12, 6
+    ; +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_13, 7
 
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_14, 8
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_15, 9
@@ -51,23 +51,23 @@ TILE_BG_SCROLL
 ;    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_20, 14
 
     lda #<TILE_BG_GRASS_START_20
-    sta ZP_PTR_2
+    sta ZP_PTR_MEH
     lda #>TILE_BG_GRASS_START_20
-    sta ZP_PTR_2_PAIR
+    sta ZP_PTR_MEH_PAIR
 
     ldy #0
 -
     iny                 ; Look at next char
-    lda (ZP_PTR_2),y    ; Indirect read
+    lda (ZP_PTR_MEH),y  ; Indirect read
     dey                 ; Step back
-    sta (ZP_PTR_2),y    ; Indirect write
+    sta (ZP_PTR_MEH),y  ; Indirect write
     iny                 ; Move forward to next pair
     cpy #38             ; Done all 37? (38-1 leaving right col alone to write later)
     bne     -
 
     ;iny                ; last col from procgen
     lda PROCGEN_COL_BUFF + 14
-    sta (ZP_PTR_2),y    
+    sta (ZP_PTR_MEH),y    
 
 
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_21, 15
@@ -96,7 +96,7 @@ TILE_BG_PROCGEN
     sta PROCGEN_COL_BUFF+16
 
     lda MATHS_RNG
-    and #%00001111       ; 0-16
+    and #%00001111              ; 0-16
     bne TILE_BG_PROCGEN_DONE    ; 1 in 32 stuff
 
     ; draw stuff
@@ -115,7 +115,7 @@ TILE_BG_PROCGEN
 
 TILE_BG_PROCGEN_DONE
 
-    rts                 ; TILE_BG_PROCGEN
+    rts                         ; TILE_BG_PROCGEN
 
 PROCGEN_COL_BUFF
     !fill 16, $00 

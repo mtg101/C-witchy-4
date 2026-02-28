@@ -67,7 +67,7 @@ SCREEN_RESET_SCROLL_Y
     sta VIC_CR1
     rts
 
-SCREEN_CHAR_COPY_ROM_2800
+SCREEN_CHAR_COPY_ROM_3000
      sei          ; Disable interrupts to prevent the Kernal 
                   ; from trying to read I/O while we hide it.
 
@@ -78,27 +78,27 @@ SCREEN_CHAR_COPY_ROM_2800
 
     ; --- Setup Pointers in Zero Page ---
     lda #$00
-    sta $fb      ; Source Low ($D000)
-    sta $fd      ; Destination Low ($2800)
+    sta ZP_PTR_1       ; Source Low ($D000)
+    sta ZP_PTR_2       ; Destination Low ($2800)
     
-    lda #$d0     ; Source High
-    sta $fc
-    lda #$28     ; Destination High
-    sta $fe
+    lda #$d0      ; Source High
+    sta ZP_PTR_1_PAIR
+    lda #$30      ; Destination High
+    sta ZP_PTR_2_PAIR
 
     ; --- The 512byte Copy Loop (first 64 chars chars, udgs beyond) ---
-    ldx #$02     ; only first 64 chars: 2 pages of 256 bytes = 512 bytes
-    ldy #$00     ; Clear Y index
+    ldx #$02      ; only first 64 chars: 2 pages of 256 bytes = 512 bytes
+    ldy #$00      ; Clear Y index
     
 copy_loop:
-    lda ($fb),y  ; Grab byte from ROM
-    sta ($fd),y  ; Write byte to RAM
-    iny          ; Next byte
+    lda (ZP_PTR_1),y   ; Grab byte from ROM
+    sta (ZP_PTR_2),y   ; Write byte to RAM
+    iny           ; Next byte
     bne copy_loop ; Loop until Y wraps to 0 (256 bytes)
     
-    inc $fc      ; Move source to next page
-    inc $fe      ; Move destination to next page
-    dex          ; Decrease page count
+    inc ZP_PTR_1_PAIR       ; Move source to next page
+    inc ZP_PTR_2_PAIR       ; Move destination to next page
+    dex           ; Decrease page count
     bne copy_loop ; Repeat for all 8 pages
 
      ; --- Restore Memory Map ---
@@ -107,13 +107,9 @@ copy_loop:
      cli          ; Re-enable interrupts
 
     rts
-SCREEN_CHAR_SET_2800
-    ; --- Setting Character Memory to $2800 ---
-    ; $2800 is Offset 5 (5 * 2048 = 10240 or $2800)
-    ; Binary for 5 is %101
-
+SCREEN_CHAR_SET_3000
     lda MEM_SETUP      ; Get current Screen/Char settings
-    and #%11110001 ; Clear bits 1, 2, and 3 (Keep the Screen pointer)
-    ora #%00001010 ; Set bits 1-3 to %101 (Binary 5)
+    and #%11110001     ; Clear bits 1, 2, and 3 (Keep the Screen pointer)
+    ora #%00001100     ; Set bits 1-3 to %101 (Binary 6)
     sta MEM_SETUP      ; Apply changes
     rts

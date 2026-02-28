@@ -228,6 +228,9 @@ ZP_PTR_1_PAIR   = $FC  ; Safe Zero Page Uses $FB and $FC
 ZP_PTR_2        = $FD  ; Safe Zero Page Uses $FD and $FE
 ZP_PTR_2_PAIR   = $FE  ; Safe Zero Page Uses $FD and $FE
 
+ZP_PTR_MEH        = $1B  ; Safe Zero Page Uses $FB and $FC
+ZP_PTR_MEH_PAIR   = $1C  ; Safe Zero Page Uses $FB and $FC
+
 
 
 ; --- Interrupts ---

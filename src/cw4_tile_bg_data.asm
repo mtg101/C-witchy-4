@@ -1,6 +1,6 @@
 
 
-*=$2A00                 ; last 64 chars of font, $40 onwards
+*=$3200                 ; last 64 chars of font, $40 onwards
 
 tile_bg_base_pixels
 !byte %00111100
