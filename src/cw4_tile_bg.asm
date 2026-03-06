@@ -1,46 +1,4 @@
 
-!macro TILE_BG_SCROLL_ROW .row_addr, .proc_row {
-    lda #<.row_addr     ; set up safe zero page for offset
-    sta ZP_PTR_TEMP_0
-    lda #>.row_addr
-    sta ZP_PTR_TEMP_0_PAIR
-
-    ldy #0
--
-    iny                 ; Look at next char
-    lda (ZP_PTR_TEMP_0),y  ; Indirect read
-    dey                 ; Step back
-    sta (ZP_PTR_TEMP_0),y  ; Indirect write
-    iny                 ; Move forward to next pair
-    cpy #38             ; Done all 0-37? (38-1 leaving right col alone to write later)
-    bne     -
-
-    ; last col from procgen
-    lda PROCGEN_CHAR_BUFF + .proc_row
-    sta (ZP_PTR_TEMP_0),y    
-}
-
-!macro TILE_BG_SCROLL_ROW_COL .row_addr, .proc_row {
-    lda #<.row_addr     ; set up safe zero page for offset
-    sta ZP_PTR_TEMP_0
-    lda #>.row_addr
-    sta ZP_PTR_TEMP_0_PAIR
-
-    ldy #0
--
-    iny                 ; Look at next col
-    lda (ZP_PTR_TEMP_0),y  ; Indirect read
-    dey                 ; Step back
-    sta (ZP_PTR_TEMP_0),y  ; Indirect write
-    iny                 ; Move forward to next pair
-    cpy #38             ; Done all 0-37? (38-1 leaving right col alone to write later)
-    bne     -
-
-    ; last col from procgen
-    lda PROCGEN_COL_BUFF + .proc_row
-    sta (ZP_PTR_TEMP_0),y    
-}
-
 TILE_BG_SETUP
     ; reset scroll offsets
     jsr SCREEN_RESET_SCROLL_X
@@ -61,44 +19,6 @@ TILE_BG_SETUP_LOOP
 
 .hellotext
     !scr    "c-witchy-4",0
-
-TILE_BG_SCROLL
-    ; chars
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_6, 0
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_7, 1
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_8, 2
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_9, 3
-
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_10, 4
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_11, 5
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_12, 6
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_13, 7
-
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_14, 8
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_15, 9
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_16, 10
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_17, 11
-
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_18, 12
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_19, 13
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_20, 14
-    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_21, 15
-
-    ; cols
-    +TILE_BG_SCROLL_ROW_COL TILE_BG_GRASS_START_COL_6, 0
-    +TILE_BG_SCROLL_ROW_COL TILE_BG_GRASS_START_COL_7, 1
-    +TILE_BG_SCROLL_ROW_COL TILE_BG_GRASS_START_COL_8, 2
-    +TILE_BG_SCROLL_ROW_COL TILE_BG_GRASS_START_COL_9, 3
-
-    ; +TILE_BG_SCROLL_ROW_COL TILE_BG_GRASS_START_COL_10, 4
-    ; +TILE_BG_SCROLL_ROW_COL TILE_BG_GRASS_START_COL_11, 5
-    ; +TILE_BG_SCROLL_ROW_COL TILE_BG_GRASS_START_COL_12, 6
-    ; +TILE_BG_SCROLL_ROW_COL TILE_BG_GRASS_START_COL_13, 7
-
-    lda #YELLOW
-    sta BORDER_COL
-
-    rts                 ; TILE_BG_SCROLL
 
 TILE_BG_PROCGEN
     ; clear char buf
@@ -210,10 +130,6 @@ TILE_BG_PROCGEN_DONE
 
 
 
-
-
-
-
 ; ---------------------------------------------------------
 ; SMC row macro
 ; ---------------------------------------------------------
@@ -286,8 +202,8 @@ TILE_BG_SCROLL_SMC
     +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_20, TILE_BG_GRASS_START_COL_20, 14
     +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_21, TILE_BG_GRASS_START_COL_21, 15
 
-    lda #YELLOW
-    sta BORDER_COL
+    ; lda #YELLOW
+    ; sta BORDER_COL
 
     rts             ; TILE_BG_SCROLL_SMC
 
