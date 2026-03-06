@@ -43,7 +43,7 @@ MAIN_LOOP
     lda RASTER_CHASE_BEAM
     beq MAIN_LOOP           ; not time yet...
 
-    inc FRAME_COUNTER
+    inc FRAME_COUNTER       ; inc first, start with frame 1 procgen
     lda FRAME_COUNTER
     and #%00000111           ; 0-7
 
@@ -71,7 +71,7 @@ FRAME_DONE
     jmp MAIN_LOOP
 
 FRAME_0 
-    jsr TILE_BG_SCROLL
+    jsr TILE_BG_SCROLL_SMC
     lda #CW4_CR2_0                   
     sta TILE_BG_CR2
     jmp FRAME_DONE

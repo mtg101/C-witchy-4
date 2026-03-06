@@ -115,6 +115,10 @@ TILE_BG_PROCGEN
     sta PROCGEN_CHAR_BUFF
     sta PROCGEN_CHAR_BUFF+15
 
+    lda #RED
+    sta PROCGEN_COL_BUFF
+    sta PROCGEN_COL_BUFF+15
+
 TILE_BG_PROCGEN_TREES
     lda MATHS_RNG
     and #%00001111              ; 0-15
@@ -171,11 +175,11 @@ TILE_BG_PROCGEN_DONE
 
 
 
-TILE_BG_SCROLL_SMC
 ; ---------------------------------------------------------
 ; SMC FULL ROW SCROLL (Screen + Color)
 ; ---------------------------------------------------------
 
+TILE_BG_SCROLL_SMC
 ; Prepare Scroll
     ; setup Screen RAM addresses
     lda #<TILE_BG_GRASS_START_6 ; Low Byte for screen
@@ -184,13 +188,13 @@ TILE_BG_SCROLL_SMC
     sta scr_dst_last + 1
     inc scr_src + 1             ; src is dest + 1
 
-    lda #<TILE_BG_GRASS_START_6 ; High Byte for Screen
+    lda #>TILE_BG_GRASS_START_6 ; High Byte for Screen
     sta scr_src + 2
     sta scr_dst + 2
     sta scr_dst_last + 2
 
     ; setup last column char source
-    lda #<PROCGEN_CHAR_BUFF + 1 ; Low Byte 
+    lda #<PROCGEN_CHAR_BUFF     ; Low Byte 
     sta scr_src_last + 1
 
     lda #>PROCGEN_CHAR_BUFF     ; High Byte
@@ -201,17 +205,19 @@ TILE_BG_SCROLL_SMC
     lda #<TILE_BG_GRASS_START_COL_6 ; Low Byte color
     sta col_src + 1
     sta col_dst + 1
+    sta col_dst_last + 1
     inc col_src + 1                 ; src is dest + 1
 
     lda #>TILE_BG_GRASS_START_COL_6 ; High Byte for Color RAM
     sta col_src + 2
     sta col_dst + 2
+    sta col_dst_last + 2
 
     ; setup last column col
-    lda #<PROCGEN_COL_BUFF + 1 ; Low Byte 
+    lda #<PROCGEN_COL_BUFF      ; Low Byte 
     sta col_src_last + 1
 
-    lda #>PROCGEN_COL_BUFF     ; High Byte
+    lda #>PROCGEN_COL_BUFF      ; High Byte
     sta col_src_last + 2
 
 
