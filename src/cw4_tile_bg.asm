@@ -1,23 +1,23 @@
 
 !macro TILE_BG_SCROLL_ROW .row_addr, .proc_row {
     lda #<.row_addr     ; set up safe zero page for offset
-    sta ZP_PTR_MEH
+    sta ZP_PTR_TEMP_0
     lda #>.row_addr
-    sta ZP_PTR_MEH_PAIR
+    sta ZP_PTR_TEMP_0_PAIR
 
     ldy #0
 -
     iny                 ; Look at next char
-    lda (ZP_PTR_MEH),y  ; Indirect read
+    lda (ZP_PTR_TEMP_0),y  ; Indirect read
     dey                 ; Step back
-    sta (ZP_PTR_MEH),y  ; Indirect write
+    sta (ZP_PTR_TEMP_0),y  ; Indirect write
     iny                 ; Move forward to next pair
     cpy #38             ; Done all 37? (38-1 leaving right col alone to write later)
     bne     -
 
     ; last col from procgen
     lda PROCGEN_COL_BUFF + .proc_row
-    sta (ZP_PTR_MEH),y    
+    sta (ZP_PTR_TEMP_0),y    
 }
 
 TILE_BG_SETUP
@@ -47,29 +47,7 @@ TILE_BG_SCROLL
 
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_18, 12
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_19, 13
-    
-;    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_20, 14
-
-    lda #<TILE_BG_GRASS_START_20
-    sta ZP_PTR_MEH
-    lda #>TILE_BG_GRASS_START_20
-    sta ZP_PTR_MEH_PAIR
-
-    ldy #0
--
-    iny                 ; Look at next char
-    lda (ZP_PTR_MEH),y  ; Indirect read
-    dey                 ; Step back
-    sta (ZP_PTR_MEH),y  ; Indirect write
-    iny                 ; Move forward to next pair
-    cpy #38             ; Done all 37? (38-1 leaving right col alone to write later)
-    bne     -
-
-    ; last col from procgen
-    lda PROCGEN_COL_BUFF + 14
-    sta (ZP_PTR_MEH),y    
-
-
+    +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_20, 14
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_21, 15
 
     ; lda #WHITE
@@ -97,25 +75,62 @@ TILE_BG_PROCGEN
     sta PROCGEN_COL_BUFF+13
     sta PROCGEN_COL_BUFF+14
     sta PROCGEN_COL_BUFF+15
-    sta PROCGEN_COL_BUFF+16
 
-    lda MATHS_RNG
-    and #%00001111              ; 0-16
-    bne TILE_BG_PROCGEN_DONE    ; 1 in 32 stuff
+    lda PROCGEN_COUNTER
+    inc PROCGEN_COUNTER
+    and #%00001111       ; 1 in 16
+    bne TILE_BG_PROCGEN_TREES
 
-    ; draw stuff
+    ; top & bottom literal edge cases
     lda #$41
     sta PROCGEN_COL_BUFF
     sta PROCGEN_COL_BUFF+15
 
-    lda #$40
-    sta PROCGEN_COL_BUFF+9
+TILE_BG_PROCGEN_TREES
+    lda MATHS_RNG
+    and #%00001111              ; 0-15
+    bne TILE_BG_PROCGEN_DONE    ; 1 in 16 draws something
 
-    lda #$41
-    sta PROCGEN_COL_BUFF+8
+    ; draw stuff
 
+    ; random height of trunk
+    lda MATHS_RNG
+    and #%00000011              ; 0-3
+    tax                         ; x is trunk height
+
+    ; random place
+    clc                         ; clear carry for add
+    adc #02                     ; a is now tree height 2-5
+    sta ZP_PTR_TEMP_1
+
+    lda #15                     ; 0-15 placement
+    sec                         ; set carry for sub
+    sbc ZP_PTR_TEMP_1           ; a is now pacement 0-max takign into accoutn tree heigh
+    tay                         ; y is now max rng 
+
+    jsr MATHS_RNG_0_Y_15        ; a is RNG 0-Y for placement
+    tay                         ; y is placement
+
+    ; draw top at placement
     lda #$42
-    sta PROCGEN_COL_BUFF+7
+    sta PROCGEN_COL_BUFF, y
+    iny         
+
+    ; then draw X trunks
+    cpx #0
+    beq TILE_BG_PROGREN_BASE
+
+TILE_GB_TRUNK_LOOP
+    lda #$41
+    sta PROCGEN_COL_BUFF, y
+    iny 
+    dex 
+    bne TILE_GB_TRUNK_LOOP
+
+TILE_BG_PROGREN_BASE
+    ; finally one base
+    lda #$40
+    sta PROCGEN_COL_BUFF, y
 
 TILE_BG_PROCGEN_DONE
 
@@ -207,3 +222,5 @@ TILE_BG_GRASS_START_19     = SCREEN_RAM + $F0 + (13 * $28)
 TILE_BG_GRASS_START_20     = SCREEN_RAM + $F0 + (14 * $28)
 TILE_BG_GRASS_START_21     = SCREEN_RAM + $F0 + (15 * $28)
 
+PROCGEN_COUNTER
+    !byte   $00
