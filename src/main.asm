@@ -24,7 +24,7 @@
 
 MAIN
     jsr SCREEN_OFF
-    lda CW4_CR2_0                   ; effectively frame 0, fully right shifted
+    lda #CW4_CR2_0                   ; fully right shifted to start
     sta VIC_CR2
     jsr ROM_CLR_SCREEN
     jsr MATHS_SETUP_RNG
@@ -73,43 +73,43 @@ FRAME_DONE
 FRAME_0 
     jsr TILE_BG_SCROLL
     lda #CW4_CR2_0                   
-    sta VIC_CR2
+    sta TILE_BG_CR2
     jmp FRAME_DONE
 
 FRAME_1
     jsr TILE_BG_PROCGEN
     lda #CW4_CR2_1
-    sta VIC_CR2
+    sta TILE_BG_CR2
     jmp FRAME_DONE
 
 FRAME_2
     lda #CW4_CR2_2
-    sta VIC_CR2
+    sta TILE_BG_CR2
     jmp FRAME_DONE
 
 FRAME_3
     lda #CW4_CR2_3
-    sta VIC_CR2
+    sta TILE_BG_CR2
     jmp FRAME_DONE
 
 FRAME_4
     lda #CW4_CR2_4
-    sta VIC_CR2
+    sta TILE_BG_CR2
     jmp FRAME_DONE
 
 FRAME_5
     lda #CW4_CR2_5
-    sta VIC_CR2
+    sta TILE_BG_CR2
     jmp FRAME_DONE
 
 FRAME_6
     lda #CW4_CR2_6
-    sta VIC_CR2
+    sta TILE_BG_CR2
     jmp FRAME_DONE
 
 FRAME_7
     lda #CW4_CR2_7
-    sta VIC_CR2
+    sta TILE_BG_CR2
     jmp FRAME_DONE
 
 ; all options jumped back

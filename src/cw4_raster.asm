@@ -118,12 +118,12 @@ RASTER_IRQ_GRASS
     nop
     nop
     nop
-    nop
-    nop
-    nop
-    nop
 
     +PUSH_ALL
+
+    ; scroll x for grass
+    lda TILE_BG_CR2
+    sta VIC_CR2   
 
     lda #GREEN
     sta BORDER_COL
@@ -162,6 +162,10 @@ RASTER_IRQ_RIVER
     lda #BLUE
     sta BORDER_COL
     sta BG_COL
+
+    ; reset after grass scrolling
+    lda #CW4_CR2_0           
+    sta VIC_CR2
 
     +RASTER_INTERRUPT_SET_ROW 0
     +ACK_IRQ

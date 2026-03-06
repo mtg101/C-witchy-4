@@ -25,8 +25,22 @@ TILE_BG_SETUP
     jsr SCREEN_RESET_SCROLL_X
     jsr SCREEN_RESET_SCROLL_Y
 
+    ; title text
+    ldy     #0
+TILE_BG_SETUP_LOOP
+    lda     .hellotext,y
+    beq     +
+    sta     SCREEN_RAM+15+SCREEN_WIDTH_CHARS,y
+    lda     #PURPLE
+    sta     COLOR_RAM+15+SCREEN_WIDTH_CHARS,y
+    iny
+    jmp     TILE_BG_SETUP_LOOP
++
     rts
 
+
+.hellotext
+    !scr    "c-witchy-4",0
 
 TILE_BG_SCROLL
     ; 16 rows 6-21
@@ -247,3 +261,7 @@ PROCGEN_CHAR_BUFF
     !fill 16, $00 
 PROCGEN_COL_BUFF
     !fill 16, GREEN
+
+TILE_BG_CR2
+    !byte   $00
+
