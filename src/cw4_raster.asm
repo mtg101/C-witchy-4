@@ -65,10 +65,10 @@ RASTER_IRQ_TOP_BORDER
     lda #BLACK
     sta BORDER_COL
     sta BG_COL
-    +PULL_ALL
     +RASTER_INTERRUPT_SET_ROW 50
     +ACK_IRQ
     +SET_IRQ RASTER_IRQ_SKY
+    +PULL_ALL
     rti
 
 RASTER_IRQ_SKY
@@ -98,10 +98,10 @@ RASTER_IRQ_SKY
 
     jsr SPRITE_BOB      ; still in IRQ for now...
 
-    +PULL_ALL
     +RASTER_INTERRUPT_SET_ROW (51-1+(8*6))
     +ACK_IRQ
     +SET_IRQ RASTER_IRQ_GRASS
+    +PULL_ALL
     rti
 
 RASTER_IRQ_GRASS
@@ -132,10 +132,10 @@ RASTER_IRQ_GRASS
     lda #$01
     sta RASTER_CHASE_BEAM
 
-    +PULL_ALL
     +RASTER_INTERRUPT_SET_ROW (51-1+(8*22))
     +ACK_IRQ
     +SET_IRQ RASTER_IRQ_RIVER
+    +PULL_ALL
     rti
 
 RASTER_IRQ_RIVER
@@ -163,10 +163,10 @@ RASTER_IRQ_RIVER
     sta BORDER_COL
     sta BG_COL
 
-    +PULL_ALL
     +RASTER_INTERRUPT_SET_ROW 0
     +ACK_IRQ
     +SET_IRQ RASTER_IRQ_TOP_BORDER
+    +PULL_ALL
     rti
 
 ; raster flags go 1 when they're ready for main loop (which will need to clear)

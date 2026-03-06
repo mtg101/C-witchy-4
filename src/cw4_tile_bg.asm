@@ -15,7 +15,7 @@
     cpy #38             ; Done all 37? (38-1 leaving right col alone to write later)
     bne     -
 
-    ;iny                ; last col from procgen
+    ; last col from procgen
     lda PROCGEN_COL_BUFF + .proc_row
     sta (ZP_PTR_MEH),y    
 }
@@ -65,12 +65,16 @@ TILE_BG_SCROLL
     cpy #38             ; Done all 37? (38-1 leaving right col alone to write later)
     bne     -
 
-    ;iny                ; last col from procgen
+    ; last col from procgen
     lda PROCGEN_COL_BUFF + 14
     sta (ZP_PTR_MEH),y    
 
 
     +TILE_BG_SCROLL_ROW TILE_BG_GRASS_START_21, 15
+
+    ; lda #WHITE
+    ; sta BORDER_COL
+
 
     rts                 ; TILE_BG_SCROLL
 
