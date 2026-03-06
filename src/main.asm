@@ -43,9 +43,6 @@ MAIN_LOOP
     lda RASTER_CHASE_BEAM
     beq MAIN_LOOP           ; not time yet...
 
-    lda #RED
-    sta BORDER_COL
-
     inc FRAME_COUNTER
     lda FRAME_COUNTER
     and #%00000111           ; 0-7
