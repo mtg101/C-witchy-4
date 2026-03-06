@@ -16,7 +16,7 @@
     bne     -
 
     ; last col from procgen
-    lda PROCGEN_COL_BUFF + .proc_row
+    lda PROCGEN_CHAR_BUFF + .proc_row
     sta (ZP_PTR_TEMP_0),y    
 }
 
@@ -53,8 +53,27 @@ TILE_BG_SCROLL
     rts                 ; TILE_BG_SCROLL
 
 TILE_BG_PROCGEN
-    ; clear buf
+    ; clear char buf
     lda #BLANK_SPACE
+    sta PROCGEN_CHAR_BUFF
+    sta PROCGEN_CHAR_BUFF+1
+    sta PROCGEN_CHAR_BUFF+2
+    sta PROCGEN_CHAR_BUFF+3
+    sta PROCGEN_CHAR_BUFF+4
+    sta PROCGEN_CHAR_BUFF+5
+    sta PROCGEN_CHAR_BUFF+6
+    sta PROCGEN_CHAR_BUFF+7
+    sta PROCGEN_CHAR_BUFF+8
+    sta PROCGEN_CHAR_BUFF+9
+    sta PROCGEN_CHAR_BUFF+10
+    sta PROCGEN_CHAR_BUFF+11
+    sta PROCGEN_CHAR_BUFF+12
+    sta PROCGEN_CHAR_BUFF+13
+    sta PROCGEN_CHAR_BUFF+14
+    sta PROCGEN_CHAR_BUFF+15
+
+    ; clear col buf
+    lda #GREEN
     sta PROCGEN_COL_BUFF
     sta PROCGEN_COL_BUFF+1
     sta PROCGEN_COL_BUFF+2
@@ -72,6 +91,7 @@ TILE_BG_PROCGEN
     sta PROCGEN_COL_BUFF+14
     sta PROCGEN_COL_BUFF+15
 
+
     lda PROCGEN_COUNTER
     inc PROCGEN_COUNTER
     and #%00001111       ; 1 in 16
@@ -79,15 +99,13 @@ TILE_BG_PROCGEN
 
     ; top & bottom literal edge cases
     lda #$41
-    sta PROCGEN_COL_BUFF
-    sta PROCGEN_COL_BUFF+15
+    sta PROCGEN_CHAR_BUFF
+    sta PROCGEN_CHAR_BUFF+15
 
 TILE_BG_PROCGEN_TREES
     lda MATHS_RNG
     and #%00001111              ; 0-15
     bne TILE_BG_PROCGEN_DONE    ; 1 in 16 draws something
-
-    ; draw stuff
 
     ; random height of trunk
     lda MATHS_RNG
@@ -109,6 +127,8 @@ TILE_BG_PROCGEN_TREES
 
     ; draw top at placement
     lda #$42
+    sta PROCGEN_CHAR_BUFF, y
+    lda #LT_GREEN
     sta PROCGEN_COL_BUFF, y
     iny         
 
@@ -118,6 +138,8 @@ TILE_BG_PROCGEN_TREES
 
 TILE_GB_TRUNK_LOOP
     lda #$41
+    sta PROCGEN_CHAR_BUFF, y
+    lda #BROWN
     sta PROCGEN_COL_BUFF, y
     iny 
     dex 
@@ -126,14 +148,14 @@ TILE_GB_TRUNK_LOOP
 TILE_BG_PROGREN_BASE
     ; finally one base
     lda #$40
+    sta PROCGEN_CHAR_BUFF, y
+    lda #BROWN
     sta PROCGEN_COL_BUFF, y
 
 TILE_BG_PROCGEN_DONE
 
     rts                         ; TILE_BG_PROCGEN
 
-PROCGEN_COL_BUFF
-    !fill 16, $00 
 
 
 ;TILE_BG_SCROLL_SMC
@@ -220,3 +242,8 @@ TILE_BG_GRASS_START_21     = SCREEN_RAM + $F0 + (15 * $28)
 
 PROCGEN_COUNTER
     !byte   $00
+
+PROCGEN_CHAR_BUFF
+    !fill 16, $00 
+PROCGEN_COL_BUFF
+    !fill 16, GREEN
