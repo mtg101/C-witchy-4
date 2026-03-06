@@ -115,14 +115,14 @@ TILE_BG_PROCGEN
     sta PROCGEN_CHAR_BUFF
     sta PROCGEN_CHAR_BUFF+15
 
-    lda #RED
+    lda #DK_GRAY
     sta PROCGEN_COL_BUFF
     sta PROCGEN_COL_BUFF+15
 
 TILE_BG_PROCGEN_TREES
     lda MATHS_RNG
-    and #%00001111              ; 0-15
-    bne TILE_BG_PROCGEN_DONE    ; 1 in 16 draws something
+    and #%00000011              ; 1 in 4 draws something
+    bne TILE_BG_PROCGEN_DONE    
 
     ; random height of trunk
     lda MATHS_RNG
@@ -156,7 +156,7 @@ TILE_BG_PROCGEN_TREES
 TILE_GB_TRUNK_LOOP
     lda #$41
     sta PROCGEN_CHAR_BUFF, y
-    lda #BROWN
+    lda #ORANGE
     sta PROCGEN_COL_BUFF, y
     iny 
     dex 
@@ -175,53 +175,89 @@ TILE_BG_PROCGEN_DONE
 
 
 
+
+
+
+
 ; ---------------------------------------------------------
-; SMC FULL ROW SCROLL (Screen + Color)
+; SMC row macro
 ; ---------------------------------------------------------
 
-TILE_BG_SCROLL_SMC
-; Prepare Scroll
+!macro TILE_BG_SCROLL_SMC_ROW .scr_addr, .col_addr, .proc_row {
     ; setup Screen RAM addresses
-    lda #<TILE_BG_GRASS_START_6 ; Low Byte for screen
+    lda #<.scr_addr             ; Low Byte for screen
     sta scr_src + 1
     sta scr_dst + 1
     sta scr_dst_last + 1
     inc scr_src + 1             ; src is dest + 1
 
-    lda #>TILE_BG_GRASS_START_6 ; High Byte for Screen
+    lda #>.scr_addr             ; High Byte for Screen
     sta scr_src + 2
     sta scr_dst + 2
     sta scr_dst_last + 2
 
     ; setup last column char source
-    lda #<PROCGEN_CHAR_BUFF     ; Low Byte 
+    lda #<PROCGEN_CHAR_BUFF + .proc_row ; Low Byte 
     sta scr_src_last + 1
 
-    lda #>PROCGEN_CHAR_BUFF     ; High Byte
+    lda #>PROCGEN_CHAR_BUFF + .proc_row ; High Byte
     sta scr_src_last + 2
 
-
     ; setup Color RAM addresses
-    lda #<TILE_BG_GRASS_START_COL_6 ; Low Byte color
+    lda #<.col_addr                 ; Low Byte color
     sta col_src + 1
     sta col_dst + 1
     sta col_dst_last + 1
     inc col_src + 1                 ; src is dest + 1
 
-    lda #>TILE_BG_GRASS_START_COL_6 ; High Byte for Color RAM
+    lda #>.col_addr                 ; High Byte for Color RAM
     sta col_src + 2
     sta col_dst + 2
     sta col_dst_last + 2
 
     ; setup last column col
-    lda #<PROCGEN_COL_BUFF      ; Low Byte 
+    lda #<PROCGEN_COL_BUFF + .proc_row  ; Low Byte 
     sta col_src_last + 1
 
-    lda #>PROCGEN_COL_BUFF      ; High Byte
+    lda #>PROCGEN_COL_BUFF + .proc_row  ; High Byte
     sta col_src_last + 2
 
+    jsr TILE_BG_SCROLL_SMC_EXECUTE
+}
+
+
+; ---------------------------------------------------------
+; SMC FULL ROW SCROLL (Screen + Color)
+; ---------------------------------------------------------
+
+TILE_BG_SCROLL_SMC
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_6, TILE_BG_GRASS_START_COL_6, 0
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_7, TILE_BG_GRASS_START_COL_7, 1
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_8, TILE_BG_GRASS_START_COL_8, 2
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_9, TILE_BG_GRASS_START_COL_9, 3
+
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_10, TILE_BG_GRASS_START_COL_10, 4
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_11, TILE_BG_GRASS_START_COL_11, 5
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_12, TILE_BG_GRASS_START_COL_12, 6
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_13, TILE_BG_GRASS_START_COL_13, 7
+
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_14, TILE_BG_GRASS_START_COL_14, 8
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_15, TILE_BG_GRASS_START_COL_15, 9
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_16, TILE_BG_GRASS_START_COL_16, 10
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_17, TILE_BG_GRASS_START_COL_17, 11
+
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_18, TILE_BG_GRASS_START_COL_18, 12
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_19, TILE_BG_GRASS_START_COL_19, 13
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_20, TILE_BG_GRASS_START_COL_20, 14
+    +TILE_BG_SCROLL_SMC_ROW TILE_BG_GRASS_START_21, TILE_BG_GRASS_START_COL_21, 15
+
+    lda #YELLOW
+    sta BORDER_COL
+
+    rts             ; TILE_BG_SCROLL_SMC
 
 ; Execute Scroll
+TILE_BG_SCROLL_SMC_EXECUTE
     ldx #$00
 .loop
 scr_src
@@ -250,7 +286,7 @@ col_src_last
 col_dst_last
     sta $ffff,x         ; SMC overwritten
 
-    rts
+    rts                 ; TILE_BG_SCROLL_SMC_EXECUTE
 
 
 
