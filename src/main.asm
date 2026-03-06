@@ -71,7 +71,7 @@ FRAME_DONE
     jmp MAIN_LOOP
 
 FRAME_0 
-    jsr TILE_BG_SCROLL_SMC
+    jsr TILE_BG_SCROLL
     lda #CW4_CR2_0                   
     sta TILE_BG_CR2
     jmp FRAME_DONE
