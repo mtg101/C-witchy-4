@@ -12,7 +12,7 @@
     dey                 ; Step back
     sta (ZP_PTR_TEMP_0),y  ; Indirect write
     iny                 ; Move forward to next pair
-    cpy #38             ; Done all 37? (38-1 leaving right col alone to write later)
+    cpy #38             ; Done all 0-37? (38-1 leaving right col alone to write later)
     bne     -
 
     ; last col from procgen
@@ -37,7 +37,6 @@ TILE_BG_SETUP_LOOP
     jmp     TILE_BG_SETUP_LOOP
 +
     rts
-
 
 .hellotext
     !scr    "c-witchy-4",0
@@ -172,62 +171,82 @@ TILE_BG_PROCGEN_DONE
 
 
 
-;TILE_BG_SCROLL_SMC
+TILE_BG_SCROLL_SMC
 ; ---------------------------------------------------------
 ; SMC FULL ROW SCROLL (Screen + Color)
 ; ---------------------------------------------------------
 
-; Parameters for this example: 
-; Screen Row Start: $0428 (Row 1)
-; Color Row Start:  $D828 (Row 1)
+; Prepare Scroll
+    ; setup Screen RAM addresses
+    lda #<TILE_BG_GRASS_START_6 ; Low Byte for screen
+    sta scr_src + 1
+    sta scr_dst + 1
+    sta scr_dst_last + 1
+    inc scr_src + 1             ; src is dest + 1
 
-; PrepareScroll
-;     ; 1. Setup Screen RAM addresses
-;     lda #$28            ; Low Byte for offset 40
-;     sta scr_src + 1
-;     sta scr_dst + 1
-;     inc scr_src + 1     ; Src is offset 41 (dest + 1)
+    lda #<TILE_BG_GRASS_START_6 ; High Byte for Screen
+    sta scr_src + 2
+    sta scr_dst + 2
+    sta scr_dst_last + 2
 
-;     lda #$04            ; High Byte for Screen
-;     sta scr_src + 2
-;     sta scr_dst + 2
+    ; setup last column char source
+    lda #<PROCGEN_CHAR_BUFF + 1 ; Low Byte 
+    sta scr_src_last + 1
 
-;     ; 2. Setup Color RAM addresses
-;     lda #$28            ; Same Low Byte
-;     sta col_src + 1
-;     sta col_dst + 1
-;     inc col_src + 1
-
-;     lda #$d8            ; High Byte for Color RAM
-;     sta col_src + 2
-;     sta col_dst + 2
-
-; ExecuteScroll
-;     ldx #$00
-; .loop
-; scr_src
-;     lda $ffff,x         ; Poked: lda $0429,x
-; scr_dst
-;     sta $ffff,x         ; Poked: sta $0428,x
-
-; col_src
-;     lda $ffff,x         ; Poked: lda $d829,x
-; col_dst
-;     sta $ffff,x         ; Poked: sta $d828,x
-
-;     inx
-;     cpx #$27            ; 39 characters
-;     bne .loop
-
-;     ; Optional: Fill the last column (39) with a space/color
-;     lda #$20            ; Space
-;     sta $0428 + 39      ; Hardcoded or use more SMC
-;     rts
+    lda #>PROCGEN_CHAR_BUFF     ; High Byte
+    sta scr_src_last + 2
 
 
+    ; setup Color RAM addresses
+    lda #<TILE_BG_GRASS_START_COL_6 ; Low Byte color
+    sta col_src + 1
+    sta col_dst + 1
+    inc col_src + 1                 ; src is dest + 1
 
-; .hellotext
-;     !scr    "c-witchy-4",0
+    lda #>TILE_BG_GRASS_START_COL_6 ; High Byte for Color RAM
+    sta col_src + 2
+    sta col_dst + 2
+
+    ; setup last column col
+    lda #<PROCGEN_COL_BUFF + 1 ; Low Byte 
+    sta col_src_last + 1
+
+    lda #>PROCGEN_COL_BUFF     ; High Byte
+    sta col_src_last + 2
+
+
+; Execute Scroll
+    ldx #$00
+.loop
+scr_src
+    lda $ffff,x         ; SMC overwrites
+scr_dst
+    sta $ffff,x         ; SMC overwrites
+
+col_src
+    lda $ffff,x         ; SMC overwrites
+col_dst
+    sta $ffff,x         ; SMC overwrites
+
+    inx
+    cpx #38             ; done all 0-37? (38-1 leaving right col alone to write later)
+    bne .loop
+
+    ; last col char from procgen
+scr_src_last
+    lda $ffff           ; SMC overwritten
+scr_dst_last
+    sta $ffff,x         ; SMC overwritten
+
+    ; last col color from procgen
+col_src_last
+    lda $ffff           ; SMC overwritten
+col_dst_last
+    sta $ffff,x         ; SMC overwritten
+
+    rts
+
+
 
 ; grass starts at row: 6
 ; goes 16 rows to: 22
@@ -253,6 +272,31 @@ TILE_BG_GRASS_START_18     = SCREEN_RAM + $F0 + (12 * $28)
 TILE_BG_GRASS_START_19     = SCREEN_RAM + $F0 + (13 * $28)
 TILE_BG_GRASS_START_20     = SCREEN_RAM + $F0 + (14 * $28)
 TILE_BG_GRASS_START_21     = SCREEN_RAM + $F0 + (15 * $28)
+
+
+; color ram version
+TILE_BG_GRASS_START_COL_6     = COLOR_RAM + $F0 + (0 * $28)
+TILE_BG_GRASS_START_COL_7     = COLOR_RAM + $F0 + (1 * $28)
+TILE_BG_GRASS_START_COL_8     = COLOR_RAM + $F0 + (2 * $28)
+TILE_BG_GRASS_START_COL_9     = COLOR_RAM + $F0 + (3 * $28)
+
+TILE_BG_GRASS_START_COL_10     = COLOR_RAM + $F0 + (4 * $28)
+TILE_BG_GRASS_START_COL_11     = COLOR_RAM + $F0 + (5 * $28)
+TILE_BG_GRASS_START_COL_12     = COLOR_RAM + $F0 + (6 * $28)
+TILE_BG_GRASS_START_COL_13     = COLOR_RAM + $F0 + (7 * $28)
+
+TILE_BG_GRASS_START_COL_14     = COLOR_RAM + $F0 + (8 * $28)
+TILE_BG_GRASS_START_COL_15     = COLOR_RAM + $F0 + (9 * $28)
+TILE_BG_GRASS_START_COL_16     = COLOR_RAM + $F0 + (10 * $28)
+TILE_BG_GRASS_START_COL_17     = COLOR_RAM + $F0 + (11 * $28)
+
+TILE_BG_GRASS_START_COL_18     = COLOR_RAM + $F0 + (12 * $28)
+TILE_BG_GRASS_START_COL_19     = COLOR_RAM + $F0 + (13 * $28)
+TILE_BG_GRASS_START_COL_20     = COLOR_RAM + $F0 + (14 * $28)
+TILE_BG_GRASS_START_COL_21     = COLOR_RAM + $F0 + (15 * $28)
+
+
+
 
 PROCGEN_COUNTER
     !byte   $00
