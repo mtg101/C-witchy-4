@@ -71,15 +71,15 @@ FRAME_DONE
     jmp MAIN_LOOP
 
 FRAME_0 
-    jsr TILE_BG_SCROLL_SMC
     lda #CW4_CR2_0                   
     sta TILE_BG_CR2
+    jsr TILE_BG_SCROLL_SMC
     jmp FRAME_DONE
 
 FRAME_1
-    jsr TILE_BG_PROCGEN
     lda #CW4_CR2_1
     sta TILE_BG_CR2
+    jsr TILE_BG_PROCGEN
     jmp FRAME_DONE
 
 FRAME_2
@@ -108,9 +108,9 @@ FRAME_6
     jmp FRAME_DONE
 
 FRAME_7
-    jsr SPRITE_FLIP_FRAME
     lda #CW4_CR2_7
     sta TILE_BG_CR2
+    jsr SPRITE_FLIP_FRAME
     jmp FRAME_DONE
 
 ; all options jumped back

@@ -203,6 +203,34 @@ SPRITE_MOVE_DOWN_DONE
 SPRITE_FLIP_FRAME
     inc SPRITE_FRAME
     lda SPRITE_FRAME
+    and #%00000111      ; every 7 frames
+    bne SPRITE_FLIP_CAT_DONE
+
+    ; flip cat
+    lda SPRITE_FRAME_CAT
+    cmp #SPRITE_CAT_NORM
+    beq SPRITE_FLIP_CAT_WAG
+
+;     ; set cat norm
+    lda #SPRITE_CAT_NORM
+    sta SPRITE_FRAME_CAT
+
+    lda #SPRITE_CAT_BRUSH_NORM
+    sta SPRITE_FRAME_CAT_BRUSH
+
+
+    jmp SPRITE_FLIP_CAT_DONE
+
+SPRITE_FLIP_CAT_WAG
+    lda #SPRITE_CAT_WAG
+    sta SPRITE_FRAME_CAT
+
+    lda #SPRITE_CAT_BRUSH_WAG
+    sta SPRITE_FRAME_CAT_BRUSH
+
+SPRITE_FLIP_CAT_DONE
+
+    lda SPRITE_FRAME
     and #%00000001
     beq SPRITE_FRAME_0
 
@@ -212,7 +240,7 @@ SPRITE_FRAME_1
     sta SPR_PTR0
     lda #(which_sprite_right_tint_hat / 64)
     sta SPR_PTR1
-    lda #(witch_sprite_left_brush / 64)
+    lda SPRITE_FRAME_CAT_BRUSH
     sta SPR_PTR2
     lda #(witch_sprite_right_hat / 64)
     sta SPR_PTR3
@@ -225,7 +253,7 @@ SPRITE_FRAME_0
     sta SPR_PTR0
     lda #(which_sprite_right_tint / 64)
     sta SPR_PTR1
-    lda #(witch_sprite_left / 64)
+    lda SPRITE_FRAME_CAT
     sta SPR_PTR2
     lda #(witch_sprite_right / 64)
     sta SPR_PTR3
@@ -242,6 +270,17 @@ SPRITE_Y_MAX = 190
 SPRITE_FRAME
     !byte   0
 
+
+SPRITE_CAT_NORM = (witch_sprite_left / 64)
+SPRITE_CAT_BRUSH_NORM = (witch_sprite_left_brush / 64)
+SPRITE_CAT_WAG = (witch_sprite_left_wag / 64)
+SPRITE_CAT_BRUSH_WAG = (witch_sprite_left_brush_wag / 64)
+
+
+SPRITE_FRAME_CAT
+    !byte   SPRITE_CAT_NORM
+SPRITE_FRAME_CAT_BRUSH
+    !byte   SPRITE_CAT_BRUSH_NORM
 SPRITE_X
     !byte   80
 
