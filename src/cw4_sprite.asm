@@ -9,7 +9,6 @@ SPRITE_INIT
     lda #$00
     sta SPR_ENABLE
 
-
     ; point to sprites
     lda #(witch_sprite_left_tint / 64)
     sta SPR_PTR0
@@ -30,23 +29,31 @@ SPRITE_INIT
     sta SPR3_COLOR
 
     ; sprite locations
-    lda #SPRITE_START_Y
+    lda SPRITE_Y
     sta SPR0_Y
     sta SPR1_Y
     sta SPR2_Y
     sta SPR3_Y
 
-    lda #SPRITE_START_X
+    lda SPRITE_X
     sta SPR0_X
     sta SPR2_X
 
-    lda #SPRITE_START_X + SPR_WIDTH
+    clc 
+    adc #SPR_WIDTH
     sta SPR1_X
     sta SPR3_X
 
     ; enable sprites
     lda #%00001111
     sta SPR_ENABLE
+
+    ; setup key ports
+    lda #$ff        ; all bits output
+    sta CIA1_DDRA
+
+    lda #$00        ; all bits input
+    sta CIA1_DDRB
 
     rts     
 
@@ -59,7 +66,8 @@ SPRITE_BOB
     cmp #%00000001
     beq SPRITE_BOB_DOWN
 
-    lda #SPRITE_START_Y
+    ; reset
+    lda SPRITE_Y
     sta SPR0_Y
     sta SPR1_Y
     sta SPR2_Y
@@ -80,7 +88,134 @@ SPRITE_BOB_DOWN
     inc SPR3_Y
     rts
 
+SPRITE_READ_KEYS
+    ; just for debugging this...
+    lda #0              ; all low so check if anything pressed
+    sta CIA1_PRA
+    lda CIA1_PRB
+    cmp #$FF
+    beq SPRITE_READ_KEYS_DONE   ; skip if nothing pressed
 
-SPRITE_START_X = 80
-SPRITE_START_Y = 170
+
+    ; a - left
+    lda #KEY_A_ROW
+    sta CIA1_PRA
+
+    lda CIA1_PRB
+    and #KEY_A_COL
+
+    beq SPRITE_MOVE_LEFT
+
+    ; d - right
+    lda #KEY_D_ROW
+    sta CIA1_PRA
+
+    lda CIA1_PRB
+    and #KEY_D_COL
+
+    beq SPRITE_MOVE_RIGHT
+
+    ; w - up
+    lda #KEY_W_ROW
+    sta CIA1_PRA
+
+    lda CIA1_PRB
+    and #KEY_W_COL
+
+    beq SPRITE_MOVE_UP
+
+    ; s - down
+    lda #KEY_S_ROW
+    sta CIA1_PRA
+
+    lda CIA1_PRB
+    and #KEY_S_COL
+
+    beq SPRITE_MOVE_DOWN
+
+SPRITE_READ_KEYS_DONE
+    ; no keys so bob
+;    jsr SPRITE_BOB
+
+    rts             ; SPRITE_READ_KEYS
+
+
+SPRITE_MOVE_LEFT
+    lda SPRITE_X
+    cmp #SPRITE_X_MIN
+    beq SPRITE_MOVE_LEFT_DONE
+
+    dec SPRITE_X
+    lda SPRITE_X
+    sta SPR0_X
+    sta SPR2_X
+
+    clc 
+    adc #SPR_WIDTH
+    sta SPR1_X
+    sta SPR3_X
+
+SPRITE_MOVE_LEFT_DONE
+    rts             ; SPRITE_READ_KEYS
+
+SPRITE_MOVE_RIGHT
+    lda SPRITE_X
+    cmp #SPRITE_X_MAX
+    beq SPRITE_MOVE_RIGHT_DONE
+
+    inc SPRITE_X
+    lda SPRITE_X
+    sta SPR0_X
+    sta SPR2_X
+
+    clc 
+    adc #SPR_WIDTH
+    sta SPR1_X
+    sta SPR3_X
+
+SPRITE_MOVE_RIGHT_DONE    
+    rts             ; SPRITE_READ_KEYS
+
+SPRITE_MOVE_UP
+    lda SPRITE_Y
+    cmp #SPRITE_Y_MIN
+    beq SPRITE_MOVE_UP_DONE
+
+    dec SPRITE_Y
+    lda SPRITE_Y
+    sta SPR0_Y
+    sta SPR1_Y
+    sta SPR2_Y
+    sta SPR3_Y
+
+SPRITE_MOVE_UP_DONE    
+    rts             ; SPRITE_READ_KEYS
+
+SPRITE_MOVE_DOWN
+    lda SPRITE_Y
+    cmp #SPRITE_Y_MAX
+    beq SPRITE_MOVE_LEFT_DONE
+
+    inc SPRITE_Y
+    lda SPRITE_Y
+    sta SPR0_Y
+    sta SPR1_Y
+    sta SPR2_Y
+    sta SPR3_Y
+
+SPRITE_MOVE_DOWN_DONE
+    rts             ; SPRITE_READ_KEYS
+
+
+SPRITE_X_MIN = 60
+SPRITE_X_MAX = 200
+SPRITE_Y_MIN = 130
+SPRITE_Y_MAX = 190
+
+
+SPRITE_X
+    !byte   80
+
+SPRITE_Y 
+    !byte   170
 

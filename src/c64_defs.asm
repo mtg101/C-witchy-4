@@ -247,3 +247,33 @@ ROM_DEFAULTS = %00110111    ; Default - BASIC, Kernal, and I/O all visible - ($3
 ROM_NO_BASIC = %00110110    ; BASIC off, Kernal on, I/O on ($36)
 ROM_JUST_IO  = %00110101     ; BASIC off, Kernal off, I/O on ($35)
 
+
+
+; key values
+
+
+KEY_SPACE_ROW   = %01111111
+KEY_Q_ROW       = %11111011
+KEY_A_ROW       = %11111101
+KEY_O_ROW       = %11011111
+KEY_P_ROW       = %11011111
+KEY_W_ROW       = %11111101
+KEY_S_ROW       = %11111101
+KEY_D_ROW       = %11111011
+
+
+KEY_SPACE_COL   = %00010000
+KEY_Q_COL       = %01000000
+KEY_A_COL       = %00000100
+KEY_O_COL       = %01000000
+KEY_P_COL       = %00000010
+KEY_W_COL       = %00000010
+KEY_S_COL       = %00100000
+KEY_D_COL       = %00000100
+
+
+; --- CIA 1 Registers ---
+CIA1_PRA = $DC00    ; Port A (Rows)
+CIA1_PRB = $DC01    ; Port B (Columns)
+CIA1_DDRA = $DC02   ; data direction A (set all bits output $ff)
+CIA1_DDRB = $DC03   ; data direction A (set all bits input $00)
