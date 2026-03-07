@@ -108,6 +108,7 @@ FRAME_6
     jmp FRAME_DONE
 
 FRAME_7
+    jsr SPRITE_FLIP_FRAME
     lda #CW4_CR2_7
     sta TILE_BG_CR2
     jmp FRAME_DONE

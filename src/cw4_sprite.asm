@@ -9,15 +9,7 @@ SPRITE_INIT
     lda #$00
     sta SPR_ENABLE
 
-    ; point to sprites
-    lda #(witch_sprite_left_tint / 64)
-    sta SPR_PTR0
-    lda #(which_sprite_right_tint / 64)
-    sta SPR_PTR1
-    lda #(witch_sprite_left / 64)
-    sta SPR_PTR2
-    lda #(witch_sprite_right / 64)
-    sta SPR_PTR3
+    jsr SPRITE_FRAME_0
 
     ; sprite colours
     lda #BROWN
@@ -207,11 +199,48 @@ SPRITE_MOVE_DOWN_DONE
     rts             ; SPRITE_READ_KEYS
 
 
+
+SPRITE_FLIP_FRAME
+    inc SPRITE_FRAME
+    lda SPRITE_FRAME
+    and #%00000001
+    beq SPRITE_FRAME_0
+
+SPRITE_FRAME_1
+    ; point to sprites
+    lda #(witch_sprite_left_tint_brush / 64)
+    sta SPR_PTR0
+    lda #(which_sprite_right_tint_hat / 64)
+    sta SPR_PTR1
+    lda #(witch_sprite_left_brush / 64)
+    sta SPR_PTR2
+    lda #(witch_sprite_right_hat / 64)
+    sta SPR_PTR3
+
+    rts             ; SPRITE_FLIP_FRAME
+
+SPRITE_FRAME_0
+    ; point to sprites
+    lda #(witch_sprite_left_tint / 64)
+    sta SPR_PTR0
+    lda #(which_sprite_right_tint / 64)
+    sta SPR_PTR1
+    lda #(witch_sprite_left / 64)
+    sta SPR_PTR2
+    lda #(witch_sprite_right / 64)
+    sta SPR_PTR3
+
+    rts             ; SPRITE_FLIP_FRAME
+
+
+
 SPRITE_X_MIN = 60
 SPRITE_X_MAX = 200
 SPRITE_Y_MIN = 130
 SPRITE_Y_MAX = 190
 
+SPRITE_FRAME
+    !byte   0
 
 SPRITE_X
     !byte   80
