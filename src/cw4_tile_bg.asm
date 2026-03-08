@@ -240,6 +240,57 @@ col_dst_last
     rts                 ; TILE_BG_SCROLL_SMC_EXECUTE
 
 
+TILE_BG_ANIMATE_TREES
+    lda MATHS_RNG
+    and #%00000111      ; 1 in 16
+    bne TILE_BG_ANIMATE_TREES_DONE
+
+    inc TILE_BG_TREE_STATE
+    lda TILE_BG_TREE_STATE
+    and #%00000001
+    bne TILE_BG_ANIMATE_TREES_ALT
+
+TILE_BG_ANIMATE_TREES_NORM
+    lda tile_bg_top_pixels_norm
+    sta tile_bg_top_pixels
+    lda tile_bg_top_pixels_norm + 1
+    sta tile_bg_top_pixels + 1
+    lda tile_bg_top_pixels_norm + 2
+    sta tile_bg_top_pixels + 2
+    lda tile_bg_top_pixels_norm + 3
+    sta tile_bg_top_pixels + 3
+    lda tile_bg_top_pixels_norm + 4
+    sta tile_bg_top_pixels + 4
+    lda tile_bg_top_pixels_norm + 5
+    sta tile_bg_top_pixels + 5
+    lda tile_bg_top_pixels_norm + 6
+    sta tile_bg_top_pixels + 6
+    lda tile_bg_top_pixels_norm + 7
+    sta tile_bg_top_pixels + 7
+    jmp TILE_BG_ANIMATE_TREES_DONE
+
+TILE_BG_ANIMATE_TREES_ALT
+    lda tile_bg_top_pixels_alt
+    sta tile_bg_top_pixels
+    lda tile_bg_top_pixels_alt + 1
+    sta tile_bg_top_pixels + 1
+    lda tile_bg_top_pixels_alt + 2
+    sta tile_bg_top_pixels + 2
+    lda tile_bg_top_pixels_alt + 3
+    sta tile_bg_top_pixels + 3
+    lda tile_bg_top_pixels_alt + 4
+    sta tile_bg_top_pixels + 4
+    lda tile_bg_top_pixels_alt + 5
+    sta tile_bg_top_pixels + 5
+    lda tile_bg_top_pixels_alt + 6
+    sta tile_bg_top_pixels + 6
+    lda tile_bg_top_pixels_alt + 7
+    sta tile_bg_top_pixels + 7
+
+TILE_BG_ANIMATE_TREES_DONE
+
+
+    rts                 ; TILE_BG_ANIMATE_TREES
 
 ; grass starts at row: 6
 ; goes 16 rows to: 22
@@ -298,7 +349,8 @@ PROCGEN_CHAR_BUFF
     !fill 16, $00 
 PROCGEN_COL_BUFF
     !fill 16, GREEN
-
 TILE_BG_CR2
+    !byte   $00
+TILE_BG_TREE_STATE
     !byte   $00
 

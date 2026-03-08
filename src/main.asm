@@ -85,6 +85,7 @@ FRAME_1
 FRAME_2
     lda #CW4_CR2_2
     sta TILE_BG_CR2
+    jsr TILE_BG_ANIMATE_TREES
     jmp FRAME_DONE
 
 FRAME_3
