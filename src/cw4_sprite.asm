@@ -1,88 +1,6 @@
 
 
-
-
-
-
 SPRITE_INIT
-    ; disable sprite while we setup
-    lda #$00
-    sta SPR_ENABLE
-
-    ; setup animated sprites
-    jsr SPRITE_FRAME_0      
-
-    ; static sprites
-    ; shield
-    lda #(witch_sprite_shield_tint / 64)
-    sta SPR_PTR4
-
-    lda #(witch_sprite_shield / 64)
-    sta SPR_PTR5
-
-    ; flames
-    lda #(witch_sprite_flames_tint / 64)
-    sta SPR_PTR6
-
-    lda #(witch_sprite_flames / 64)
-    sta SPR_PTR7
-
-    ; sprite colours
-    lda #BROWN
-    sta SPR0_COLOR
-    lda #PURPLE
-    sta SPR1_COLOR
-    lda #BLACK
-    sta SPR2_COLOR
-    sta SPR3_COLOR
-
-    lda #CYAN
-    sta SPR4_COLOR
-    lda #LT_BLUE
-    sta SPR5_COLOR
-
-    lda #RED
-    sta SPR6_COLOR
-    lda #YELLOW
-    sta SPR7_COLOR
-
-    ; sprite locations
-    lda SPRITE_Y
-    sta SPR0_Y
-    sta SPR1_Y
-    sta SPR2_Y
-    sta SPR3_Y
-    sta SPR4_Y
-    sta SPR5_Y
-    sta SPR6_Y
-    sta SPR7_Y
-
-    lda SPRITE_X
-    sta SPR0_X
-    sta SPR2_X
-
-    clc 
-    adc #SPR_WIDTH
-    sta SPR1_X
-    sta SPR3_X
-
-    ; shield
-    clc 
-    adc #SPR_WIDTH
-    sta SPR4_X
-    sta SPR5_X
-
-    ; flames
-    lda SPRITE_X
-    sec 
-    sbc #SPR_WIDTH-8    ; overlaps behind broom
-    sta SPR6_X
-    sta SPR7_X
-
-    ; enable sprites
-    lda #%00001111
-    sta SPR_ENABLE
-
     ; setup key ports
     lda #$ff        ; all bits output
     sta CIA1_DDRA
@@ -91,6 +9,154 @@ SPRITE_INIT
     sta CIA1_DDRB
 
     rts     
+
+SPRITE_FLIP_TO_CLOUDS
+    ; sprite colours
+    lda #WHITE
+    sta SPR0_COLOR
+    sta SPR1_COLOR
+    sta SPR2_COLOR
+    sta SPR3_COLOR
+    sta SPR4_COLOR
+    sta SPR5_COLOR
+    sta SPR6_COLOR
+    sta SPR7_COLOR
+
+    ; sprite locations
+    lda SPRITE_CLOUDS_Y_0
+    sta SPR0_Y
+    lda SPRITE_CLOUDS_Y_1
+    sta SPR1_Y
+    lda SPRITE_CLOUDS_Y_2
+    sta SPR2_Y
+    lda SPRITE_CLOUDS_Y_3
+    sta SPR3_Y
+    lda SPRITE_CLOUDS_Y_4
+    sta SPR4_Y
+    lda SPRITE_CLOUDS_Y_5
+    sta SPR5_Y
+    lda SPRITE_CLOUDS_Y_6
+    sta SPR6_Y
+    lda SPRITE_CLOUDS_Y_7
+    sta SPR7_Y
+
+    lda SPRITE_CLOUDS_X_0
+    sta SPR0_X
+    lda SPRITE_CLOUDS_X_1
+    sta SPR1_X
+    lda SPRITE_CLOUDS_X_2
+    sta SPR2_X
+    lda SPRITE_CLOUDS_X_3
+    sta SPR3_X
+    lda SPRITE_CLOUDS_X_4
+    sta SPR4_X
+    lda SPRITE_CLOUDS_X_5
+    sta SPR5_X
+    lda SPRITE_CLOUDS_X_6
+    sta SPR6_X
+    lda SPRITE_CLOUDS_X_7
+    sta SPR7_X
+
+    ; sprite pointers
+    lda SPRITE_CLOUDS_PTR_0
+    sta SPR_PTR0
+    lda SPRITE_CLOUDS_PTR_1
+    sta SPR_PTR1
+    lda SPRITE_CLOUDS_PTR_2
+    sta SPR_PTR2
+    lda SPRITE_CLOUDS_PTR_3
+    sta SPR_PTR3
+    lda SPRITE_CLOUDS_PTR_4
+    sta SPR_PTR4
+    lda SPRITE_CLOUDS_PTR_5
+    sta SPR_PTR5
+    lda SPRITE_CLOUDS_PTR_6
+    sta SPR_PTR6
+    lda SPRITE_CLOUDS_PTR_7
+    sta SPR_PTR7
+
+    ; enable sprites
+    lda SPRITE_CLOUDS_ENABLE
+    sta SPR_ENABLE 
+
+    rts             ; SPRITE_FLIP_TO_CLOUDS
+
+SPRITE_FLIP_TO_WITCH
+    ; sprite colours
+    lda #BROWN
+    sta SPR0_COLOR
+    lda #PURPLE
+    sta SPR1_COLOR
+    lda #BLACK
+    sta SPR2_COLOR
+    sta SPR3_COLOR
+    lda #CYAN
+    sta SPR4_COLOR
+    lda #LT_BLUE
+    sta SPR5_COLOR
+    lda #RED
+    sta SPR6_COLOR
+    lda #YELLOW
+    sta SPR7_COLOR
+
+    ; sprite locations
+    lda SPRITE_WITCH_Y_0
+    sta SPR0_Y
+    lda SPRITE_WITCH_Y_1
+    sta SPR1_Y
+    lda SPRITE_WITCH_Y_2
+    sta SPR2_Y
+    lda SPRITE_WITCH_Y_3
+    sta SPR3_Y
+    lda SPRITE_WITCH_Y_4
+    sta SPR4_Y
+    lda SPRITE_WITCH_Y_5
+    sta SPR5_Y
+    lda SPRITE_WITCH_Y_6
+    sta SPR6_Y
+    lda SPRITE_WITCH_Y_7
+    sta SPR7_Y
+
+    lda SPRITE_WITCH_X_0
+    sta SPR0_X
+    lda SPRITE_WITCH_X_1
+    sta SPR1_X
+    lda SPRITE_WITCH_X_2
+    sta SPR2_X
+    lda SPRITE_WITCH_X_3
+    sta SPR3_X
+    lda SPRITE_WITCH_X_4
+    sta SPR4_X
+    lda SPRITE_WITCH_X_5
+    sta SPR5_X
+    lda SPRITE_WITCH_X_6
+    sta SPR6_X
+    lda SPRITE_WITCH_X_7
+    sta SPR7_X
+
+    ; sprite pointers
+    lda SPRITE_WITCH_PTR_0
+    sta SPR_PTR0
+    lda SPRITE_WITCH_PTR_1
+    sta SPR_PTR1
+    lda SPRITE_WITCH_PTR_2
+    sta SPR_PTR2
+    lda SPRITE_WITCH_PTR_3
+    sta SPR_PTR3
+    lda SPRITE_WITCH_PTR_4
+    sta SPR_PTR4
+    lda SPRITE_WITCH_PTR_5
+    sta SPR_PTR5
+    lda SPRITE_WITCH_PTR_6
+    sta SPR_PTR6
+    lda SPRITE_WITCH_PTR_7
+    sta SPR_PTR7
+
+    ; enable sprites
+    lda SPRITE_WITCH_ENABLE
+    sta SPR_ENABLE 
+
+    rts             ; SPRITE_FLIP_TO_WITCH
 
 SPRITE_BOB
     lda MATHS_RNG
@@ -102,7 +168,7 @@ SPRITE_BOB
     beq SPRITE_BOB_DOWN
 
     ; reset
-    lda SPRITE_Y
+    lda SPRITE_WITCH_Y_0
     sta SPR0_Y
     sta SPR1_Y
     sta SPR2_Y
@@ -142,32 +208,18 @@ SPRITE_UPDATE_WITCH
 
     bne SPRITE_MOVE_LEFT_DONE
 SPRITE_MOVE_LEFT
-    lda SPRITE_X
-    cmp #SPRITE_X_MIN
+    lda SPRITE_WITCH_X_0
+    cmp #SPRITE_WITCH_X_MIN
     beq SPRITE_MOVE_LEFT_DONE
 
-    dec SPRITE_X
-    lda SPRITE_X
-    sta SPR0_X
-    sta SPR2_X
-
-    clc 
-    adc #SPR_WIDTH
-    sta SPR1_X
-    sta SPR3_X
-
-    ; shield
-    clc 
-    adc #SPR_WIDTH
-    sta SPR4_X
-    sta SPR5_X
-
-    ; flames
-    lda SPRITE_X
-    sec 
-    sbc #SPR_WIDTH-8    ; overlaps behind broom
-    sta SPR6_X
-    sta SPR7_X
+    dec SPRITE_WITCH_X_0
+    dec SPRITE_WITCH_X_1
+    dec SPRITE_WITCH_X_2
+    dec SPRITE_WITCH_X_3
+    dec SPRITE_WITCH_X_4
+    dec SPRITE_WITCH_X_5
+    dec SPRITE_WITCH_X_6
+    dec SPRITE_WITCH_X_7
     
 SPRITE_MOVE_LEFT_DONE
 
@@ -180,32 +232,18 @@ SPRITE_MOVE_LEFT_DONE
 
     bne SPRITE_MOVE_RIGHT_DONE
 SPRITE_MOVE_RIGHT
-    lda SPRITE_X
-    cmp #SPRITE_X_MAX
+    lda SPRITE_WITCH_X_0
+    cmp #SPRITE_WITCH_X_MAX
     beq SPRITE_MOVE_RIGHT_DONE
 
-    inc SPRITE_X
-    lda SPRITE_X
-    sta SPR0_X
-    sta SPR2_X
-
-    clc 
-    adc #SPR_WIDTH
-    sta SPR1_X
-    sta SPR3_X
-
-    ; shield
-    clc 
-    adc #SPR_WIDTH
-    sta SPR4_X
-    sta SPR5_X
-
-    ; flames
-    lda SPRITE_X
-    sec 
-    sbc #SPR_WIDTH-8    ; overlaps behind broom
-    sta SPR6_X
-    sta SPR7_X
+    inc SPRITE_WITCH_X_0
+    inc SPRITE_WITCH_X_1
+    inc SPRITE_WITCH_X_2
+    inc SPRITE_WITCH_X_3
+    inc SPRITE_WITCH_X_4
+    inc SPRITE_WITCH_X_5
+    inc SPRITE_WITCH_X_6
+    inc SPRITE_WITCH_X_7
 
 SPRITE_MOVE_RIGHT_DONE
 
@@ -218,20 +256,18 @@ SPRITE_MOVE_RIGHT_DONE
 
     bne SPRITE_MOVE_UP_DONE
 SPRITE_MOVE_UP
-    lda SPRITE_Y
-    cmp #SPRITE_Y_MIN
+    lda SPRITE_WITCH_Y_0
+    cmp #SPRITE_WITCH_Y_MIN
     beq SPRITE_MOVE_UP_DONE
 
-    dec SPRITE_Y
-    lda SPRITE_Y
-    sta SPR0_Y
-    sta SPR1_Y
-    sta SPR2_Y
-    sta SPR3_Y
-    sta SPR4_Y
-    sta SPR5_Y
-    sta SPR6_Y
-    sta SPR7_Y
+    dec SPRITE_WITCH_Y_0
+    dec SPRITE_WITCH_Y_1
+    dec SPRITE_WITCH_Y_2
+    dec SPRITE_WITCH_Y_3
+    dec SPRITE_WITCH_Y_4
+    dec SPRITE_WITCH_Y_5
+    dec SPRITE_WITCH_Y_6
+    dec SPRITE_WITCH_Y_7
 SPRITE_MOVE_UP_DONE
 
     ; s - down
@@ -243,20 +279,18 @@ SPRITE_MOVE_UP_DONE
 
     bne SPRITE_MOVE_DOWN_DONE
 SPRITE_MOVE_DOWN
-    lda SPRITE_Y
-    cmp #SPRITE_Y_MAX
+    lda SPRITE_WITCH_Y_0
+    cmp #SPRITE_WITCH_Y_MAX
     beq SPRITE_MOVE_DOWN_DONE
 
-    inc SPRITE_Y
-    lda SPRITE_Y
-    sta SPR0_Y
-    sta SPR1_Y
-    sta SPR2_Y
-    sta SPR3_Y
-    sta SPR4_Y
-    sta SPR5_Y
-    sta SPR6_Y
-    sta SPR7_Y
+    inc SPRITE_WITCH_Y_0
+    inc SPRITE_WITCH_Y_1
+    inc SPRITE_WITCH_Y_2
+    inc SPRITE_WITCH_Y_3
+    inc SPRITE_WITCH_Y_4
+    inc SPRITE_WITCH_Y_5
+    inc SPRITE_WITCH_Y_6
+    inc SPRITE_WITCH_Y_7
 SPRITE_MOVE_DOWN_DONE
 
 SPRITE_SHIELD
@@ -270,16 +304,16 @@ SPRITE_SHIELD
     beq SPRITE_SHIELD_ON
 
 SPRITE_SHIELD_OFF
-    lda SPR_ENABLE
-    and #%11001111       ; disable shield sprites
+    lda SPRITE_WITCH_ENABLE
+    and #%11001111       
     jmp SPRITE_SHIELD_DONE
 
 SPRITE_SHIELD_ON
-    lda SPR_ENABLE
-    ora #%00110000       ; enable shield sprites
+    lda SPRITE_WITCH_ENABLE
+    ora #%00110000       
 
 SPRITE_SHIELD_DONE
-    sta SPR_ENABLE      ; update vic
+    sta SPRITE_WITCH_ENABLE
 
 SPRITE_FLAMES
     ; enter - flames
@@ -292,19 +326,18 @@ SPRITE_FLAMES
     beq SPRITE_FLAMES_ON
 
 SPRITE_FLAMES_OFF
-    lda SPR_ENABLE
-    and #%00111111       ; disable shield sprites
+    lda SPRITE_WITCH_ENABLE
+    and #%00111111       
     jmp SPRITE_FLAMES_DONE
 SPRITE_FLAMES_ON
-    lda SPR_ENABLE
-    ora #%11000000       ; enable shield sprites
+    lda SPRITE_WITCH_ENABLE
+    ora #%11000000       
 SPRITE_FLAMES_DONE
-    sta SPR_ENABLE      ; update vic
-
+    sta SPRITE_WITCH_ENABLE
 
 SPRITE_READ_KEYS_DONE
     ; always bob sprite
-    jsr SPRITE_BOB
+;    jsr SPRITE_BOB
 
     rts             ; SPRITE_READ_KEYS
 
@@ -319,13 +352,12 @@ SPRITE_FLIP_FRAME
     cmp #SPRITE_CAT_NORM
     beq SPRITE_FLIP_CAT_WAG
 
-;     ; set cat norm
+    ; set cat norm
     lda #SPRITE_CAT_NORM
     sta SPRITE_FRAME_CAT
 
     lda #SPRITE_CAT_BRUSH_NORM
     sta SPRITE_FRAME_CAT_BRUSH
-
 
     jmp SPRITE_FLIP_CAT_DONE
 
@@ -340,44 +372,43 @@ SPRITE_FLIP_CAT_DONE
 
     lda SPRITE_FRAME
     and #%00000001
-    beq SPRITE_FRAME_0
+    beq SPRITE_WITCH_FRAME_0
 
-SPRITE_FRAME_1
+SPRITE_WITCH_FRAME_1
     ; point to sprites
     lda #(witch_sprite_left_tint_brush / 64)
-    sta SPR_PTR0
+    sta SPRITE_WITCH_PTR_0
     lda #(witch_sprite_right_tint_hat / 64)
-    sta SPR_PTR1
+    sta SPRITE_WITCH_PTR_1
     lda SPRITE_FRAME_CAT_BRUSH
-    sta SPR_PTR2
+    sta SPRITE_WITCH_PTR_2
     lda #(witch_sprite_right_hat / 64)
-    sta SPR_PTR3
+    sta SPRITE_WITCH_PTR_3
 
     rts             ; SPRITE_FLIP_FRAME
 
-SPRITE_FRAME_0
+SPRITE_WITCH_FRAME_0
     ; point to sprites
     lda #(witch_sprite_left_tint / 64)
-    sta SPR_PTR0
+    sta SPRITE_WITCH_PTR_0
     lda #(witch_sprite_right_tint / 64)
-    sta SPR_PTR1
+    sta SPRITE_WITCH_PTR_1
     lda SPRITE_FRAME_CAT
-    sta SPR_PTR2
+    sta SPRITE_WITCH_PTR_2
     lda #(witch_sprite_right / 64)
-    sta SPR_PTR3
+    sta SPRITE_WITCH_PTR_3
 
     rts             ; SPRITE_FLIP_FRAME
 
 
 
-SPRITE_X_MIN = 60
-SPRITE_X_MAX = 200
-SPRITE_Y_MIN = 130
-SPRITE_Y_MAX = 190
+SPRITE_WITCH_X_MIN = 60
+SPRITE_WITCH_X_MAX = 200
+SPRITE_WITCH_Y_MIN = 130
+SPRITE_WITCH_Y_MAX = 190
 
-SPRITE_FRAME
+SPRITE_FRAME 
     !byte   0
-
 
 SPRITE_CAT_NORM = (witch_sprite_left / 64)
 SPRITE_CAT_BRUSH_NORM = (witch_sprite_left_brush / 64)
@@ -389,9 +420,111 @@ SPRITE_FRAME_CAT
     !byte   SPRITE_CAT_NORM
 SPRITE_FRAME_CAT_BRUSH
     !byte   SPRITE_CAT_BRUSH_NORM
-SPRITE_X
-    !byte   80
 
-SPRITE_Y 
+SPRITE_WITCH_ENABLE      
+    !byte   %00001111
+
+SPRITE_WITCH_X_0
+    !byte   80
+SPRITE_WITCH_X_1
+    !byte   80 + SPR_WIDTH
+SPRITE_WITCH_X_2
+    !byte   80
+SPRITE_WITCH_X_3
+    !byte   80 + SPR_WIDTH
+SPRITE_WITCH_X_4
+    !byte   80 + SPR_WIDTH + SPR_WIDTH
+SPRITE_WITCH_X_5
+    !byte   80 + SPR_WIDTH + SPR_WIDTH
+SPRITE_WITCH_X_6
+    !byte   80 - SPR_WIDTH + 8
+SPRITE_WITCH_X_7
+    !byte   80 - SPR_WIDTH + 8
+
+SPRITE_WITCH_Y_0
+    !byte   170
+SPRITE_WITCH_Y_1
+    !byte   170
+SPRITE_WITCH_Y_2
+    !byte   170
+SPRITE_WITCH_Y_3
+    !byte   170
+SPRITE_WITCH_Y_4
+    !byte   170
+SPRITE_WITCH_Y_5
+    !byte   170
+SPRITE_WITCH_Y_6
+    !byte   170
+SPRITE_WITCH_Y_7
     !byte   170
 
+SPRITE_WITCH_PTR_0
+    !byte   (witch_sprite_left_tint / 64)
+SPRITE_WITCH_PTR_1
+    !byte   (witch_sprite_right_tint / 64)
+SPRITE_WITCH_PTR_2
+    !byte   SPRITE_CAT_NORM
+SPRITE_WITCH_PTR_3
+    !byte   (witch_sprite_right / 64)
+SPRITE_WITCH_PTR_4
+    !byte   (witch_sprite_shield_tint / 64)
+SPRITE_WITCH_PTR_5
+    !byte   (witch_sprite_shield / 64)
+SPRITE_WITCH_PTR_6
+    !byte   (witch_sprite_flames_tint / 64)
+SPRITE_WITCH_PTR_7
+    !byte   (witch_sprite_flames / 64)
+
+SPRITE_CLOUDS_ENABLE
+    !byte   %00000001
+
+SPRITE_CLOUDS_X_0
+    !byte   255
+SPRITE_CLOUDS_X_1
+    !byte   255
+SPRITE_CLOUDS_X_2
+    !byte   255
+SPRITE_CLOUDS_X_3
+    !byte   255
+SPRITE_CLOUDS_X_4
+    !byte   255
+SPRITE_CLOUDS_X_5
+    !byte   255
+SPRITE_CLOUDS_X_6
+    !byte   255
+SPRITE_CLOUDS_X_7
+    !byte   255
+
+SPRITE_CLOUDS_Y_0
+    !byte   70
+SPRITE_CLOUDS_Y_1
+    !byte   70
+SPRITE_CLOUDS_Y_2
+    !byte   70
+SPRITE_CLOUDS_Y_3
+    !byte   70
+SPRITE_CLOUDS_Y_4
+    !byte   70
+SPRITE_CLOUDS_Y_5
+    !byte   70
+SPRITE_CLOUDS_Y_6
+    !byte   70
+SPRITE_CLOUDS_Y_7
+    !byte   70
+
+SPRITE_CLOUDS_PTR_0
+    !byte   (witch_sprite_cloud / 64)
+SPRITE_CLOUDS_PTR_1
+    !byte   (witch_sprite_cloud / 64)
+SPRITE_CLOUDS_PTR_2
+    !byte   (witch_sprite_cloud / 64)
+SPRITE_CLOUDS_PTR_3
+    !byte   (witch_sprite_cloud / 64)
+SPRITE_CLOUDS_PTR_4
+    !byte   (witch_sprite_cloud / 64)
+SPRITE_CLOUDS_PTR_5
+    !byte   (witch_sprite_cloud / 64)
+SPRITE_CLOUDS_PTR_6
+    !byte   (witch_sprite_cloud / 64)
+SPRITE_CLOUDS_PTR_7
+    !byte   (witch_sprite_cloud / 64)
