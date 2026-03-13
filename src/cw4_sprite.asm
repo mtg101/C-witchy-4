@@ -9,7 +9,23 @@ SPRITE_INIT
     lda #$00
     sta SPR_ENABLE
 
-    jsr SPRITE_FRAME_0
+    ; setup animated sprites
+    jsr SPRITE_FRAME_0      
+
+    ; static sprites
+    ; shield
+    lda #(witch_sprite_shield_tint / 64)
+    sta SPR_PTR4
+
+    lda #(witch_sprite_shield / 64)
+    sta SPR_PTR5
+
+    ; flames
+    lda #(witch_sprite_flames_tint / 64)
+    sta SPR_PTR6
+
+    lda #(witch_sprite_flames / 64)
+    sta SPR_PTR7
 
     ; sprite colours
     lda #BROWN
@@ -20,12 +36,26 @@ SPRITE_INIT
     sta SPR2_COLOR
     sta SPR3_COLOR
 
+    lda #CYAN
+    sta SPR4_COLOR
+    lda #LT_BLUE
+    sta SPR5_COLOR
+
+    lda #RED
+    sta SPR6_COLOR
+    lda #YELLOW
+    sta SPR7_COLOR
+
     ; sprite locations
     lda SPRITE_Y
     sta SPR0_Y
     sta SPR1_Y
     sta SPR2_Y
     sta SPR3_Y
+    sta SPR4_Y
+    sta SPR5_Y
+    sta SPR6_Y
+    sta SPR7_Y
 
     lda SPRITE_X
     sta SPR0_X
@@ -35,6 +65,19 @@ SPRITE_INIT
     adc #SPR_WIDTH
     sta SPR1_X
     sta SPR3_X
+
+    ; shield
+    clc 
+    adc #SPR_WIDTH
+    sta SPR4_X
+    sta SPR5_X
+
+    ; flames
+    lda SPRITE_X
+    sec 
+    sbc #SPR_WIDTH-8    ; overlaps behind broom
+    sta SPR6_X
+    sta SPR7_X
 
     ; enable sprites
     lda #%00001111
@@ -80,15 +123,7 @@ SPRITE_BOB_DOWN
     inc SPR3_Y
     rts
 
-SPRITE_READ_KEYS
-    ; just for debugging this...
-    lda #0              ; all low so check if anything pressed
-    sta CIA1_PRA
-    lda CIA1_PRB
-    cmp #$FF
-    beq SPRITE_READ_KEYS_DONE   ; skip if nothing pressed
-
-
+SPRITE_UPDATE_WITCH
     ; a - left
     lda #KEY_A_ROW
     sta CIA1_PRA
@@ -96,42 +131,7 @@ SPRITE_READ_KEYS
     lda CIA1_PRB
     and #KEY_A_COL
 
-    beq SPRITE_MOVE_LEFT
-
-    ; d - right
-    lda #KEY_D_ROW
-    sta CIA1_PRA
-
-    lda CIA1_PRB
-    and #KEY_D_COL
-
-    beq SPRITE_MOVE_RIGHT
-
-    ; w - up
-    lda #KEY_W_ROW
-    sta CIA1_PRA
-
-    lda CIA1_PRB
-    and #KEY_W_COL
-
-    beq SPRITE_MOVE_UP
-
-    ; s - down
-    lda #KEY_S_ROW
-    sta CIA1_PRA
-
-    lda CIA1_PRB
-    and #KEY_S_COL
-
-    beq SPRITE_MOVE_DOWN
-
-SPRITE_READ_KEYS_DONE
-    ; no keys so bob
-;    jsr SPRITE_BOB
-
-    rts             ; SPRITE_READ_KEYS
-
-
+    bne SPRITE_MOVE_LEFT_DONE
 SPRITE_MOVE_LEFT
     lda SPRITE_X
     cmp #SPRITE_X_MIN
@@ -147,9 +147,29 @@ SPRITE_MOVE_LEFT
     sta SPR1_X
     sta SPR3_X
 
-SPRITE_MOVE_LEFT_DONE
-    rts             ; SPRITE_READ_KEYS
+    ; shield
+    clc 
+    adc #SPR_WIDTH
+    sta SPR4_X
+    sta SPR5_X
 
+    ; flames
+    lda SPRITE_X
+    sec 
+    sbc #SPR_WIDTH-8    ; overlaps behind broom
+    sta SPR6_X
+    sta SPR7_X
+    
+SPRITE_MOVE_LEFT_DONE
+
+    ; d - right
+    lda #KEY_D_ROW
+    sta CIA1_PRA
+
+    lda CIA1_PRB
+    and #KEY_D_COL
+
+    bne SPRITE_MOVE_RIGHT_DONE
 SPRITE_MOVE_RIGHT
     lda SPRITE_X
     cmp #SPRITE_X_MAX
@@ -165,9 +185,29 @@ SPRITE_MOVE_RIGHT
     sta SPR1_X
     sta SPR3_X
 
-SPRITE_MOVE_RIGHT_DONE    
-    rts             ; SPRITE_READ_KEYS
+    ; shield
+    clc 
+    adc #SPR_WIDTH
+    sta SPR4_X
+    sta SPR5_X
 
+    ; flames
+    lda SPRITE_X
+    sec 
+    sbc #SPR_WIDTH-8    ; overlaps behind broom
+    sta SPR6_X
+    sta SPR7_X
+
+SPRITE_MOVE_RIGHT_DONE
+
+    ; w - up
+    lda #KEY_W_ROW
+    sta CIA1_PRA
+
+    lda CIA1_PRB
+    and #KEY_W_COL
+
+    bne SPRITE_MOVE_UP_DONE
 SPRITE_MOVE_UP
     lda SPRITE_Y
     cmp #SPRITE_Y_MIN
@@ -179,14 +219,24 @@ SPRITE_MOVE_UP
     sta SPR1_Y
     sta SPR2_Y
     sta SPR3_Y
+    sta SPR4_Y
+    sta SPR5_Y
+    sta SPR6_Y
+    sta SPR7_Y
+SPRITE_MOVE_UP_DONE
 
-SPRITE_MOVE_UP_DONE    
-    rts             ; SPRITE_READ_KEYS
+    ; s - down
+    lda #KEY_S_ROW
+    sta CIA1_PRA
 
+    lda CIA1_PRB
+    and #KEY_S_COL
+
+    bne SPRITE_MOVE_DOWN_DONE
 SPRITE_MOVE_DOWN
     lda SPRITE_Y
     cmp #SPRITE_Y_MAX
-    beq SPRITE_MOVE_LEFT_DONE
+    beq SPRITE_MOVE_DOWN_DONE
 
     inc SPRITE_Y
     lda SPRITE_Y
@@ -194,11 +244,60 @@ SPRITE_MOVE_DOWN
     sta SPR1_Y
     sta SPR2_Y
     sta SPR3_Y
-
+    sta SPR4_Y
+    sta SPR5_Y
+    sta SPR6_Y
+    sta SPR7_Y
 SPRITE_MOVE_DOWN_DONE
+
+SPRITE_SHIELD
+    ; space - shield
+    lda #KEY_SPACE_ROW
+    sta CIA1_PRA
+
+    lda CIA1_PRB
+    and #KEY_SPACE_COL
+
+    beq SPRITE_SHIELD_ON
+
+SPRITE_SHIELD_OFF
+    lda SPR_ENABLE
+    and #%11001111       ; disable shield sprites
+    jmp SPRITE_SHIELD_DONE
+
+SPRITE_SHIELD_ON
+    lda SPR_ENABLE
+    ora #%00110000       ; enable shield sprites
+
+SPRITE_SHIELD_DONE
+    sta SPR_ENABLE      ; update vic
+
+SPRITE_FLAMES
+    ; enter - flames
+    lda #KEY_ENTER_ROW
+    sta CIA1_PRA
+
+    lda CIA1_PRB
+    and #KEY_ENTER_COL
+
+    beq SPRITE_FLAMES_ON
+
+SPRITE_FLAMES_OFF
+    lda SPR_ENABLE
+    and #%00111111       ; disable shield sprites
+    jmp SPRITE_FLAMES_DONE
+SPRITE_FLAMES_ON
+    lda SPR_ENABLE
+    ora #%11000000       ; enable shield sprites
+SPRITE_FLAMES_DONE
+    sta SPR_ENABLE      ; update vic
+
+
+SPRITE_READ_KEYS_DONE
+    ; always bob sprite
+    jsr SPRITE_BOB
+
     rts             ; SPRITE_READ_KEYS
-
-
 
 SPRITE_FLIP_FRAME
     inc SPRITE_FRAME
@@ -238,7 +337,7 @@ SPRITE_FRAME_1
     ; point to sprites
     lda #(witch_sprite_left_tint_brush / 64)
     sta SPR_PTR0
-    lda #(which_sprite_right_tint_hat / 64)
+    lda #(witch_sprite_right_tint_hat / 64)
     sta SPR_PTR1
     lda SPRITE_FRAME_CAT_BRUSH
     sta SPR_PTR2
@@ -251,7 +350,7 @@ SPRITE_FRAME_0
     ; point to sprites
     lda #(witch_sprite_left_tint / 64)
     sta SPR_PTR0
-    lda #(which_sprite_right_tint / 64)
+    lda #(witch_sprite_right_tint / 64)
     sta SPR_PTR1
     lda SPRITE_FRAME_CAT
     sta SPR_PTR2

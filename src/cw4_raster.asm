@@ -96,7 +96,7 @@ RASTER_IRQ_SKY
     sta BORDER_COL
     sta BG_COL
 
-    jsr SPRITE_READ_KEYS    ; wand to move every frame
+    jsr SPRITE_UPDATE_WITCH    ; wand to move every frame
 
     +RASTER_INTERRUPT_SET_ROW (51-1+(8*6))
     +ACK_IRQ
