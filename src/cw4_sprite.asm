@@ -107,6 +107,9 @@ SPRITE_BOB
     sta SPR1_Y
     sta SPR2_Y
     sta SPR3_Y
+    ; shield doesn't bob
+    sta SPR6_Y
+    sta SPR7_Y
     rts
 
 SPRITE_BOB_UP
@@ -114,6 +117,9 @@ SPRITE_BOB_UP
     dec SPR1_Y
     dec SPR2_Y
     dec SPR3_Y
+    ; shield doesn't bob
+    dec SPR6_Y
+    dec SPR7_Y
     rts
 
 SPRITE_BOB_DOWN
@@ -121,6 +127,9 @@ SPRITE_BOB_DOWN
     inc SPR1_Y
     inc SPR2_Y
     inc SPR3_Y
+    ; shield doesn't bob
+    inc SPR6_Y
+    inc SPR7_Y
     rts
 
 SPRITE_UPDATE_WITCH
