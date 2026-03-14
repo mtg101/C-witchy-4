@@ -152,6 +152,8 @@ SPRITE_FLIP_TO_WITCH
     lda SPRITE_WITCH_PTR_7
     sta SPR_PTR7
 
+    jsr SPRITE_BOB
+
     ; enable sprites
     lda SPRITE_WITCH_ENABLE
     sta SPR_ENABLE 
@@ -167,16 +169,18 @@ SPRITE_BOB
     cmp #%00000001
     beq SPRITE_BOB_DOWN
 
-    ; reset
-    lda SPRITE_WITCH_Y_0
-    sta SPR0_Y
-    sta SPR1_Y
-    sta SPR2_Y
-    sta SPR3_Y
-    ; shield doesn't bob
-    sta SPR6_Y
-    sta SPR7_Y
-    rts
+SPRITE_BOB_X
+    lda MATHS_RNG
+    and #%00000111
+    cmp #%00000000
+    beq SPRITE_BOB_LEFT
+
+    cmp #%00000001
+    beq SPRITE_BOB_RIGHT
+
+SPRITE_BOB_DONE
+    rts 
+
 
 SPRITE_BOB_UP
     dec SPR0_Y
@@ -186,7 +190,7 @@ SPRITE_BOB_UP
     ; shield doesn't bob
     dec SPR6_Y
     dec SPR7_Y
-    rts
+    jmp SPRITE_BOB_X
 
 SPRITE_BOB_DOWN
     inc SPR0_Y
@@ -196,7 +200,18 @@ SPRITE_BOB_DOWN
     ; shield doesn't bob
     inc SPR6_Y
     inc SPR7_Y
-    rts
+    jmp SPRITE_BOB_X
+
+SPRITE_BOB_LEFT
+    dec SPR6_X
+    dec SPR7_X
+    jmp SPRITE_BOB_DONE
+
+SPRITE_BOB_RIGHT
+    inc SPR6_X
+    inc SPR7_X
+    jmp SPRITE_BOB_DONE
+
 
 SPRITE_UPDATE_WITCH
     ; a - left
@@ -336,9 +351,6 @@ SPRITE_FLAMES_DONE
     sta SPRITE_WITCH_ENABLE
 
 SPRITE_READ_KEYS_DONE
-    ; always bob sprite
-;    jsr SPRITE_BOB
-
     rts             ; SPRITE_READ_KEYS
 
 SPRITE_FLIP_FRAME
