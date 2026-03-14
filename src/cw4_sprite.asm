@@ -79,6 +79,10 @@ SPRITE_FLIP_TO_CLOUDS
     lda SPRITE_CLOUDS_ENABLE
     sta SPR_ENABLE 
 
+    ; behind text
+    lda #%11111111
+    sta SPR_PRIORITY
+
     rts             ; SPRITE_FLIP_TO_CLOUDS
 
 SPRITE_FLIP_TO_WITCH
@@ -157,6 +161,10 @@ SPRITE_FLIP_TO_WITCH
     ; enable sprites
     lda SPRITE_WITCH_ENABLE
     sta SPR_ENABLE 
+
+    ; in front of trees
+    lda #%00000000
+    sta SPR_PRIORITY
 
     rts             ; SPRITE_FLIP_TO_WITCH
 
@@ -413,6 +421,57 @@ SPRITE_WITCH_FRAME_0
     rts             ; SPRITE_FLIP_FRAME
 
 
+SPRITE_MOVE_CLOUDS
+    dec SPRITE_CLOUDS_X_0
+
+    inc SPRITE_CLOUD_FRAME
+    lda SPRITE_CLOUD_FRAME
+    and #%00000001  
+    beq SPRITE_MOVE_CLOUDS_1in2
+SPRITE_MOVE_CLOUDS_1in2_DONE
+    lda SPRITE_CLOUD_FRAME
+    and #%00000011  
+    beq SPRITE_MOVE_CLOUDS_1in4
+SPRITE_MOVE_CLOUDS_1in4_DONE
+    lda SPRITE_CLOUD_FRAME
+    and #%00000111  
+    beq SPRITE_MOVE_CLOUDS_1in8
+
+SPRITE_MOVE_CLOUDS_1in8_DONE
+    lda SPRITE_CLOUD_FRAME
+    and #%00001111  
+    beq SPRITE_MOVE_CLOUDS_1in16
+
+SPRITE_MOVE_CLOUDS_1in16_DONE
+    lda SPRITE_CLOUD_FRAME
+    and #%00011111  
+    beq SPRITE_MOVE_CLOUDS_1in32
+
+SPRITE_MOVE_CLOUDS_1in32_DONE
+    rts
+
+SPRITE_MOVE_CLOUDS_1in2
+    dec SPRITE_CLOUDS_X_1
+    jmp SPRITE_MOVE_CLOUDS_1in2_DONE
+
+SPRITE_MOVE_CLOUDS_1in4
+    dec SPRITE_CLOUDS_X_2
+    dec SPRITE_CLOUDS_X_3
+    jmp SPRITE_MOVE_CLOUDS_1in4_DONE
+
+SPRITE_MOVE_CLOUDS_1in8
+    dec SPRITE_CLOUDS_X_4
+    dec SPRITE_CLOUDS_X_5
+    jmp SPRITE_MOVE_CLOUDS_1in8_DONE
+
+SPRITE_MOVE_CLOUDS_1in16
+    dec SPRITE_CLOUDS_X_6
+    jmp SPRITE_MOVE_CLOUDS_1in16_DONE
+
+SPRITE_MOVE_CLOUDS_1in32
+    dec SPRITE_CLOUDS_X_7
+    jmp SPRITE_MOVE_CLOUDS_1in32_DONE
+
 
 SPRITE_WITCH_X_MIN = 60
 SPRITE_WITCH_X_MAX = 200
@@ -420,7 +479,10 @@ SPRITE_WITCH_Y_MIN = 130
 SPRITE_WITCH_Y_MAX = 190
 
 SPRITE_FRAME 
-    !byte   0
+    !byte 0
+
+SPRITE_CLOUD_FRAME
+    !byte 0
 
 SPRITE_CAT_NORM = (witch_sprite_left / 64)
 SPRITE_CAT_BRUSH_NORM = (witch_sprite_left_brush / 64)
@@ -488,7 +550,7 @@ SPRITE_WITCH_PTR_7
     !byte   (witch_sprite_flames / 64)
 
 SPRITE_CLOUDS_ENABLE
-    !byte   %00000001
+    !byte   %11101010
 
 SPRITE_CLOUDS_X_0
     !byte   255
@@ -508,21 +570,21 @@ SPRITE_CLOUDS_X_7
     !byte   255
 
 SPRITE_CLOUDS_Y_0
-    !byte   70
+    !byte   75
 SPRITE_CLOUDS_Y_1
     !byte   70
 SPRITE_CLOUDS_Y_2
     !byte   70
 SPRITE_CLOUDS_Y_3
-    !byte   70
+    !byte   63
 SPRITE_CLOUDS_Y_4
-    !byte   70
+    !byte   65
 SPRITE_CLOUDS_Y_5
-    !byte   70
+    !byte   57
 SPRITE_CLOUDS_Y_6
-    !byte   70
+    !byte   50
 SPRITE_CLOUDS_Y_7
-    !byte   70
+    !byte   44
 
 SPRITE_CLOUDS_PTR_0
     !byte   (witch_sprite_cloud / 64)

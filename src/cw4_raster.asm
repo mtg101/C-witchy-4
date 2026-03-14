@@ -83,8 +83,8 @@ RASTER_IRQ_SKY
     nop
     nop
     nop
-    nop
-    nop
+    ; nop
+    ; nop
     nop
     nop
     nop
@@ -172,6 +172,8 @@ RASTER_IRQ_RIVER
     ; reset after grass scrolling
     lda #CW4_CR2_0           
     sta VIC_CR2
+
+    jsr SPRITE_MOVE_CLOUDS
 
     +RASTER_INTERRUPT_SET_ROW 0
     +ACK_IRQ
