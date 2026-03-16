@@ -451,13 +451,16 @@ SPRITE_MOVE_CLOUDS_1in8_DONE
 SPRITE_MOVE_CLOUDS_1in16_DONE
     lda SPRITE_CLOUD_FRAME
     and #%00011111  
-    beq SPRITE_MOVE_CLOUDS_1in32
+    bne SPRITE_MOVE_CLOUDS_1in32_DONE
+    jmp SPRITE_MOVE_CLOUDS_1in32
 
 SPRITE_MOVE_CLOUDS_1in32_DONE
     rts
 
 SPRITE_MOVE_CLOUDS_1in2
     dec SPRITE_CLOUDS_X_0
+    lda SPRITE_CLOUDS_X_0
+    cmp #255
     bne +
     ; flip 9th bit
     lda SPRITE_CLOUDS_MSB
@@ -468,6 +471,8 @@ SPRITE_MOVE_CLOUDS_1in2
 
 SPRITE_MOVE_CLOUDS_1in4
     dec SPRITE_CLOUDS_X_1
+    lda SPRITE_CLOUDS_X_1
+    cmp #255
     bne +
     ; flip 9th bit
     lda SPRITE_CLOUDS_MSB
@@ -475,6 +480,8 @@ SPRITE_MOVE_CLOUDS_1in4
     sta SPRITE_CLOUDS_MSB
 +
     dec SPRITE_CLOUDS_X_2
+    lda SPRITE_CLOUDS_X_2
+    cmp #255
     bne +
     ; flip 9th bit
     lda SPRITE_CLOUDS_MSB
@@ -485,6 +492,8 @@ SPRITE_MOVE_CLOUDS_1in4
 
 SPRITE_MOVE_CLOUDS_1in8
     dec SPRITE_CLOUDS_X_3
+    lda SPRITE_CLOUDS_X_3
+    cmp #255
     bne +
     ; flip 9th bit
     lda SPRITE_CLOUDS_MSB
@@ -492,6 +501,8 @@ SPRITE_MOVE_CLOUDS_1in8
     sta SPRITE_CLOUDS_MSB
 +
     dec SPRITE_CLOUDS_X_4
+    lda SPRITE_CLOUDS_X_4
+    cmp #255
     bne +
     ; flip 9th bit
     lda SPRITE_CLOUDS_MSB
@@ -502,6 +513,8 @@ SPRITE_MOVE_CLOUDS_1in8
 
 SPRITE_MOVE_CLOUDS_1in16
     dec SPRITE_CLOUDS_X_5
+    lda SPRITE_CLOUDS_X_5
+    cmp #255
     bne +
     ; flip 9th bit
     lda SPRITE_CLOUDS_MSB
@@ -509,6 +522,7 @@ SPRITE_MOVE_CLOUDS_1in16
     sta SPRITE_CLOUDS_MSB
 +
     dec SPRITE_CLOUDS_X_6
+    lda SPRITE_CLOUDS_X_6
     bne +
     ; flip 9th bit
     lda SPRITE_CLOUDS_MSB
@@ -519,6 +533,8 @@ SPRITE_MOVE_CLOUDS_1in16
 
 SPRITE_MOVE_CLOUDS_1in32
     dec SPRITE_CLOUDS_X_7
+    lda SPRITE_CLOUDS_X_7
+    cmp #255
     bne +
     ; flip 9th bit
     lda SPRITE_CLOUDS_MSB
