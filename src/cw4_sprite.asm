@@ -57,6 +57,10 @@ SPRITE_FLIP_TO_CLOUDS
     lda SPRITE_CLOUDS_X_7
     sta SPR7_X
 
+    ; 255 funsies
+    lda SPRITE_CLOUDS_MSB
+    sta SPR_X_MSB
+
     ; sprite pointers
     lda SPRITE_CLOUDS_PTR_0
     sta SPR_PTR0
@@ -165,6 +169,10 @@ SPRITE_FLIP_TO_WITCH
     ; in front of trees
     lda #%00000000
     sta SPR_PRIORITY
+
+    ; never goes beyond X 255
+    lda #0
+    sta SPR_X_MSB
 
     rts             ; SPRITE_FLIP_TO_WITCH
 
@@ -422,8 +430,6 @@ SPRITE_WITCH_FRAME_0
 
 
 SPRITE_MOVE_CLOUDS
-    dec SPRITE_CLOUDS_X_0
-
     inc SPRITE_CLOUD_FRAME
     lda SPRITE_CLOUD_FRAME
     and #%00000001  
@@ -451,25 +457,74 @@ SPRITE_MOVE_CLOUDS_1in32_DONE
     rts
 
 SPRITE_MOVE_CLOUDS_1in2
-    dec SPRITE_CLOUDS_X_1
+    dec SPRITE_CLOUDS_X_0
+    bne +
+    ; flip 9th bit
+    lda SPRITE_CLOUDS_MSB
+    eor #%00000001
+    sta SPRITE_CLOUDS_MSB
++
     jmp SPRITE_MOVE_CLOUDS_1in2_DONE
 
 SPRITE_MOVE_CLOUDS_1in4
+    dec SPRITE_CLOUDS_X_1
+    bne +
+    ; flip 9th bit
+    lda SPRITE_CLOUDS_MSB
+    eor #%00000010
+    sta SPRITE_CLOUDS_MSB
++
     dec SPRITE_CLOUDS_X_2
-    dec SPRITE_CLOUDS_X_3
+    bne +
+    ; flip 9th bit
+    lda SPRITE_CLOUDS_MSB
+    eor #%00000100
+    sta SPRITE_CLOUDS_MSB
++
     jmp SPRITE_MOVE_CLOUDS_1in4_DONE
 
 SPRITE_MOVE_CLOUDS_1in8
+    dec SPRITE_CLOUDS_X_3
+    bne +
+    ; flip 9th bit
+    lda SPRITE_CLOUDS_MSB
+    eor #%00001000
+    sta SPRITE_CLOUDS_MSB
++
     dec SPRITE_CLOUDS_X_4
-    dec SPRITE_CLOUDS_X_5
+    bne +
+    ; flip 9th bit
+    lda SPRITE_CLOUDS_MSB
+    eor #%00010000
+    sta SPRITE_CLOUDS_MSB
++
     jmp SPRITE_MOVE_CLOUDS_1in8_DONE
 
 SPRITE_MOVE_CLOUDS_1in16
+    dec SPRITE_CLOUDS_X_5
+    bne +
+    ; flip 9th bit
+    lda SPRITE_CLOUDS_MSB
+    eor #%00100000
+    sta SPRITE_CLOUDS_MSB
++
     dec SPRITE_CLOUDS_X_6
+    bne +
+    ; flip 9th bit
+    lda SPRITE_CLOUDS_MSB
+    eor #%01000000
+    sta SPRITE_CLOUDS_MSB
++
     jmp SPRITE_MOVE_CLOUDS_1in16_DONE
 
 SPRITE_MOVE_CLOUDS_1in32
     dec SPRITE_CLOUDS_X_7
+    bne +
+    ; flip 9th bit
+    lda SPRITE_CLOUDS_MSB
+    eor #%10000000
+    sta SPRITE_CLOUDS_MSB
++
     jmp SPRITE_MOVE_CLOUDS_1in32_DONE
 
 
@@ -491,29 +546,29 @@ SPRITE_CAT_BRUSH_WAG = (witch_sprite_left_brush_wag / 64)
 
 
 SPRITE_FRAME_CAT
-    !byte   SPRITE_CAT_NORM
+    !byte SPRITE_CAT_NORM
 SPRITE_FRAME_CAT_BRUSH
-    !byte   SPRITE_CAT_BRUSH_NORM
+    !byte SPRITE_CAT_BRUSH_NORM
 
 SPRITE_WITCH_ENABLE      
-    !byte   %00001111
+    !byte %00001111
 
 SPRITE_WITCH_X_0
-    !byte   80
+    !byte 80
 SPRITE_WITCH_X_1
-    !byte   80 + SPR_WIDTH
+    !byte 80 + SPR_WIDTH
 SPRITE_WITCH_X_2
-    !byte   80
+    !byte 80
 SPRITE_WITCH_X_3
-    !byte   80 + SPR_WIDTH
+    !byte 80 + SPR_WIDTH
 SPRITE_WITCH_X_4
-    !byte   80 + SPR_WIDTH + SPR_WIDTH
+    !byte 80 + SPR_WIDTH + SPR_WIDTH
 SPRITE_WITCH_X_5
-    !byte   80 + SPR_WIDTH + SPR_WIDTH
+    !byte 80 + SPR_WIDTH + SPR_WIDTH
 SPRITE_WITCH_X_6
-    !byte   80 - SPR_WIDTH + 8
+    !byte 80 - SPR_WIDTH + 8
 SPRITE_WITCH_X_7
-    !byte   80 - SPR_WIDTH + 8
+    !byte 80 - SPR_WIDTH + 8
 
 SPRITE_WITCH_Y_0
     !byte   170
@@ -550,31 +605,34 @@ SPRITE_WITCH_PTR_7
     !byte   (witch_sprite_flames / 64)
 
 SPRITE_CLOUDS_ENABLE
-    !byte   %11101010
+    !byte   %11111111
+
+SPRITE_CLOUDS_MSB
+    !byte   %11111111
 
 SPRITE_CLOUDS_X_0
-    !byte   255
+    !byte   200
 SPRITE_CLOUDS_X_1
-    !byte   255
+    !byte   210
 SPRITE_CLOUDS_X_2
-    !byte   255
+    !byte   250
 SPRITE_CLOUDS_X_3
     !byte   255
 SPRITE_CLOUDS_X_4
-    !byte   255
+    !byte   145
 SPRITE_CLOUDS_X_5
-    !byte   255
+    !byte   205
 SPRITE_CLOUDS_X_6
-    !byte   255
+    !byte   240
 SPRITE_CLOUDS_X_7
-    !byte   255
+    !byte   215
 
 SPRITE_CLOUDS_Y_0
     !byte   75
 SPRITE_CLOUDS_Y_1
     !byte   70
 SPRITE_CLOUDS_Y_2
-    !byte   70
+    !byte   65
 SPRITE_CLOUDS_Y_3
     !byte   63
 SPRITE_CLOUDS_Y_4
